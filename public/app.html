@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesantren Absensi - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--primary:#6366f1;--primary-dark:#4f46e5;--primary-light:#818cf8;--bg:#0f172a;--bg2:#1e293b;--bg3:#334155;--text:#f8fafc;--text2:#94a3b8;--text3:#64748b;--glass:rgba(255,255,255,0.06);--glass-border:rgba(255,255,255,0.1);--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6;--radius:12px;--sidebar-w:260px}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:radial-gradient(ellipse at 30% 30%,rgba(99,102,241,.15) 0%,transparent 50%),radial-gradient(ellipse at 70% 70%,rgba(139,92,246,.1) 0%,transparent 50%)}
+  .login-card{width:100%;max-width:420px;background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);padding:36px;backdrop-filter:blur(20px)}
+  .login-header{text-align:center;margin-bottom:28px}
+  .login-logo{width:56px;height:56px;background:linear-gradient(135deg,var(--primary),#8b5cf6);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.5rem}
+  .login-header h1{font-size:1.4rem;font-weight:700}.login-header p{color:var(--text2);font-size:.85rem;margin-top:4px}
+  .tabs{display:flex;gap:4px;background:rgba(0,0,0,.3);border-radius:10px;padding:4px;margin-bottom:20px}
+  .tab{flex:1;padding:9px;text-align:center;border-radius:8px;cursor:pointer;font-weight:500;font-size:.82rem;color:var(--text2);transition:all .2s;border:none;background:none;font-family:inherit}
+  .tab.active{background:var(--primary);color:#fff}
+  .form-group{margin-bottom:14px}
+  .form-group label{display:block;margin-bottom:5px;font-weight:500;font-size:.82rem;color:var(--text2)}
+  .form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 14px;background:rgba(0,0,0,.3);border:1px solid var(--glass-border);border-radius:8px;color:var(--text);font-size:.92rem;transition:all .2s;font-family:inherit}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+  .btn{padding:11px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:.9rem;transition:all .2s;display:inline-flex;align-items:center;gap:7px;font-family:inherit}
+  .btn-primary{background:linear-gradient(135deg,var(--primary),#8b5cf6);color:#fff;width:100%;justify-content:center}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,.35)}
+  .btn-sm{padding:7px 14px;font-size:.8rem}
+  .btn-outline{background:transparent;color:var(--text);border:1px solid var(--glass-border)}
+  .btn-outline:hover{background:var(--glass)}
+  .btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{opacity:.9}
+  .btn-success{background:var(--success);color:#fff}.btn-success:hover{opacity:.9}
+  .btn-warning{background:var(--warning);color:#000}.btn-warning:hover{opacity:.9}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+  .app{display:none;min-height:100vh}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--glass-border);z-index:100;display:flex;flex-direction:column;transition:transform .3s}
+  .sidebar-head{padding:18px 16px;border-bottom:1px solid var(--glass-border)}
+  .sidebar-head .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem}
+  .sidebar-head .brand-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),#8b5cf6);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+  .sidebar-head .brand small{display:block;color:var(--text3);font-weight:400;font-size:.7rem;margin-top:2px}
+  .sidebar-nav{flex:1;overflow-y:auto;padding:10px 0}
+  .sidebar-nav::-webkit-scrollbar{width:4px}.sidebar-nav::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:4px}
+  .nav-section{padding:8px 16px 4px;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-weight:600}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:all .15s;color:var(--text2);font-size:.85rem;border-left:3px solid transparent}
+  .nav-item:hover{background:var(--glass);color:var(--text)}
+  .nav-item.active{background:rgba(99,102,241,.12);color:var(--primary-light);border-left-color:var(--primary)}
+  .nav-item i{width:18px;height:18px;flex-shrink:0}
+  .sidebar-footer{padding:12px 16px;border-top:1px solid var(--glass-border)}
+  .user-info{display:flex;align-items:center;gap:10px;font-size:.82rem}
+  .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem}
+  .user-info .name{font-weight:600;font-size:.82rem}.user-info .role{color:var(--text3);font-size:.7rem}
+  .btn-logout{margin-top:8px;width:100%;justify-content:center;font-size:.78rem;padding:7px}
+  .main{margin-left:var(--sidebar-w);min-height:100vh}
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(15,23,42,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--glass-border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+  .topbar h2{font-size:1.15rem;font-weight:700}
+  .topbar-actions{display:flex;align-items:center;gap:10px}
+  .hamburger{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:4px}
+  .content{padding:24px;max-width:1200px}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+  .stat-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);padding:20px}
+  .stat-card .label{font-size:.78rem;color:var(--text2);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .stat-card .value{font-size:1.6rem;font-weight:800}
+  .stat-card .sub{font-size:.72rem;color:var(--text3);margin-top:4px}
+  .card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);overflow:hidden}
+  .card-header{padding:16px 20px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .card-header h3{font-size:1rem;font-weight:700}
+  .card-body{padding:0}
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:.84rem}
+  th{padding:10px 16px;text-align:left;font-weight:600;color:var(--text2);background:rgba(0,0,0,.2);font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+  td{padding:10px 16px;border-top:1px solid var(--glass-border);white-space:nowrap}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .search-box{padding:9px 14px;background:rgba(0,0,0,.3);border:1px solid var(--glass-border);border-radius:8px;color:var(--text);font-size:.84rem;width:220px;font-family:inherit}
+  .search-box:focus{outline:none;border-color:var(--primary)}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600}
+  .badge-success{background:rgba(16,185,129,.15);color:var(--success)}
+  .badge-warning{background:rgba(245,158,11,.15);color:var(--warning)}
+  .badge-danger{background:rgba(239,68,68,.15);color:var(--danger)}
+  .badge-info{background:rgba(59,130,246,.15);color:var(--info)}
+  .actions{display:flex;gap:6px}
+  .icon-btn{width:30px;height:30px;border-radius:6px;border:1px solid var(--glass-border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .icon-btn:hover{background:var(--glass);color:var(--text)}
+  .icon-btn.danger:hover{background:rgba(239,68,68,.15);color:var(--danger)}
+  .empty{text-align:center;padding:40px 20px;color:var(--text3)}
+  .empty i{font-size:2rem;margin-bottom:10px;display:block}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-overlay.show{display:flex}
+  .modal{background:var(--bg2);border:1px solid var(--glass-border);border-radius:var(--radius);width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+  .modal-header{padding:18px 20px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between}
+  .modal-header h3{font-size:1rem;font-weight:700}
+  .modal-close{background:none;border:none;color:var(--text2);cursor:pointer;font-size:1.2rem;padding:4px}
+  .modal-body{padding:20px}
+  .modal-footer{padding:14px 20px;border-top:1px solid var(--glass-border);display:flex;justify-content:flex-end;gap:8px}
+  .toast-container{position:fixed;top:16px;right:16px;z-index:300;display:flex;flex-direction:column;gap:8px}
+  .toast{padding:12px 18px;border-radius:8px;font-size:.84rem;font-weight:500;animation:slideIn .3s;display:flex;align-items:center;gap:8px;min-width:250px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+  .toast.success{background:var(--success);color:#fff}
+  .toast.error{background:var(--danger);color:#fff}
+  .toast.info{background:var(--info);color:#fff}
+  @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+  .pagination{display:flex;align-items:center;justify-content:center;gap:4px;padding:14px}
+  .page-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--glass-border);background:transparent;color:var(--text2);cursor:pointer;font-size:.8rem;transition:all .15s}
+  .page-btn:hover,.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .page-btn:disabled{opacity:.3;cursor:not-allowed}
+  .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;display:none}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .row .col{flex:1;min-width:200px}
+  .mb-3{margin-bottom:12px}
+  .mb-4{margin-bottom:16px}
+  .mt-3{margin-top:12px}
+  .text-center{text-align:center}
+  .text-muted{color:var(--text3)}
+  .fw-600{font-weight:600}
+  @media(max-width:768px){
+    .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.sidebar-overlay.show{display:block}
+    .main{margin-left:0}.hamburger{display:block}.content{padding:16px}
+    .stats-grid{grid-template-columns:repeat(2,1fr)}.search-box{width:100%}
+  }
+  @media(max-width:480px){.stats-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<div class="login-wrap" id="loginPage">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo">&#x1F3D7;&#xFE0F;</div>
+      <h1>Pesantren Absensi</h1>
+      <p>Masuk ke akun Anda</p>
+    </div>
+    <div class="tabs">
+      <button type="button" class="tab active" data-tab="admin">Admin / Ustadz</button>
+      <button type="button" class="tab" data-tab="wali">Wali</button>
+      <button type="button" class="tab" data-tab="super">Super Admin</button>
+    </div>
+    <form id="loginForm"></form>
+  </div>
+</div>
+
+<div class="app" id="appPage">
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="brand">
+        <div class="brand-icon">&#x1F3D7;&#xFE0F;</div>
+        <div><span id="sidebarAppName">Pesantren Absensi</span><small id="sidebarSekolah">-</small></div>
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">A</div>
+        <div><div class="name" id="userName">-</div><div class="role" id="userRole">-</div></div>
+      </div>
+      <button class="btn btn-outline btn-logout" onclick="logout()">Keluar</button>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="hamburger" onclick="toggleSidebar()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
+        <h2 id="pageTitle">Dashboard</h2>
+      </div>
+      <div class="topbar-actions" id="topbarActions"></div>
+    </header>
+    <div class="content" id="pageContent"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header"><h3 id="modalTitle">Modal</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+
+// ===== STATE =====
+const S = {
+  token: localStorage.getItem('pa_token'),
+  user: JSON.parse(localStorage.getItem('pa_user') || 'null'),
+  sekolah: null,
+  page: location.hash.slice(1) || 'dashboard',
+  slug: new URLSearchParams(location.search).get('slug') || location.hostname.split('.')[0]
+};
+
+// ===== API =====
+function getSlug() {
+  const h = location.hostname;
+  const p = h.split('.');
+  if (p.length >= 3 && p[0] !== 'www') return p[0];
+  return new URLSearchParams(location.search).get('slug') || localStorage.getItem('pa_slug') || '';
+}
+
+async function api(path, opts = {}) {
+  const slug = getSlug();
+  const headers = { 'Content-Type': 'application/json' };
+  if (S.token) headers['Authorization'] = 'Bearer ' + S.token;
+  if (slug) headers['X-Tenant-Slug'] = slug;
+  const res = await fetch(path, { ...opts, headers: { ...headers, ...(opts.headers || {}) } });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401) { logout(); throw new Error('Sesi habis'); }
+    throw new Error(data.error || 'Request gagal');
+  }
+  return data;
+}
+
+// ===== TOAST =====
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = '<span>' + msg + '</span>';
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ===== MODAL =====
+function openModal(title, bodyHtml, footerHtml) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = bodyHtml;
+  document.getElementById('modalFooter').innerHTML = footerHtml;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+
+// ===== AUTH =====
+let loginTab = 'admin';
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    loginTab = t.dataset.tab;
+    renderLoginFields();
+  });
+});
+
+function renderLoginFields() {
+  const f = document.getElementById('loginForm');
+  if (loginTab === 'admin') {
+    f.innerHTML = `
+      <div class="form-group"><label>Username</label><input name="username" required></div>
+      <div class="form-group"><label>Password</label><input name="password" type="password" required></div>
+      <div class="form-group"><label>Slug Pesantren</label><input name="slug" value="${S.slug}" placeholder="contoh: darul-hikmah"></div>
+      <button type="submit" class="btn btn-primary">Masuk</button>`;
+  } else if (loginTab === 'wali') {
+    f.innerHTML = `
+      <div class="form-group"><label>NIS / Nama Santri</label><input name="identitas" required></div>
+      <div class="form-group"><label>Slug Pesantren</label><input name="slug" value="${S.slug}" placeholder="contoh: darul-hikmah"></div>
+      <button type="submit" class="btn btn-primary">Masuk sebagai Wali</button>`;
+  } else {
+    f.innerHTML = `
+      <div class="form-group"><label>Username</label><input name="username" required></div>
+      <div class="form-group"><label>Password</label><input name="password" type="password" required></div>
+      <button type="submit" class="btn btn-primary">Masuk sebagai Super Admin</button>`;
+  }
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const d = Object.fromEntries(fd);
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true; btn.textContent = 'Memproses...';
+  try {
+    let res;
+    if (loginTab === 'admin') {
+      localStorage.setItem('pa_slug', d.slug);
+      res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type':'application/json','X-Tenant-Slug':d.slug}, body: JSON.stringify({username:d.username, password:d.password}) });
+    } else if (loginTab === 'wali') {
+      localStorage.setItem('pa_slug', d.slug);
+      res = await fetch('/api/login-wali', { method: 'POST', headers: {'Content-Type':'application/json','X-Tenant-Slug':d.slug}, body: JSON.stringify({identitas:d.identitas}) });
+    } else {
+      res = await fetch('/api/super/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({username:d.username, password:d.password}) });
+    }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Login gagal');
+    S.token = data.token; S.user = data.user;
+    localStorage.setItem('pa_token', data.token);
+    localStorage.setItem('pa_user', JSON.stringify(data.user));
+    toast('Login berhasil!');
+    initApp();
+  } catch (err) { toast(err.message, 'error'); }
+  btn.disabled = false; btn.textContent = 'Masuk';
+}
+
+function logout() {
+  S.token = null; S.user = null; S.sekolah = null;
+  localStorage.removeItem('pa_token'); localStorage.removeItem('pa_user');
+  document.getElementById('loginPage').style.display = '';
+  document.getElementById('appPage').style.display = 'none';
+  renderLoginFields();
+}
+
+// ===== SIDEBAR =====
+const menuConfig = {
+  admin: [
+    {section:'Utama', items:[
+      {id:'dashboard',icon:'layout-dashboard',label:'Dashboard'},
+    ]},
+    {section:'Data Master', items:[
+      {id:'santri',icon:'users',label:'Santri'},
+      {id:'kamar',icon:'bed-double',label:'Kamar'},
+      {id:'kelas',icon:'school',label:'Kelas'},
+      {id:'kegiatan',icon:'calendar-check',label:'Kegiatan'},
+      {id:'kelompok',icon:'users-round',label:'Kelompok'},
+    ]},
+    {section:'Operasional', items:[
+      {id:'jadwal',icon:'calendar-clock',label:'Jadwal'},
+      {id:'absensi',icon:'clipboard-check',label:'Absensi'},
+      {id:'absen-malam',icon:'moon',label:'Absen Malam'},
+      {id:'absen-sekolah',icon:'graduation-cap',label:'Absen Sekolah'},
+    ]},
+    {section:'Akademik', items:[
+      {id:'pelanggaran',icon:'alert-triangle',label:'Pelanggaran'},
+      {id:'catatan',icon:'notebook-pen',label:'Catatan Guru'},
+      {id:'pengumuman',icon:'megaphone',label:'Pengumuman'},
+      {id:'rekap',icon:'bar-chart-3',label:'Rekap'},
+    ]},
+    {section:'Sistem', items:[
+      {id:'users',icon:'shield',label:'Pengguna'},
+      {id:'settings',icon:'settings',label:'Pengaturan'},
+    ]},
+  ],
+  ustadz: [
+    {section:'Utama', items:[
+      {id:'dashboard',icon:'layout-dashboard',label:'Dashboard'},
+    ]},
+    {section:'Operasional', items:[
+      {id:'absensi',icon:'clipboard-check',label:'Absensi'},
+      {id:'kelompok',icon:'users-round',label:'Kelompok'},
+    ]},
+    {section:'Akademik', items:[
+      {id:'pelanggaran',icon:'alert-triangle',label:'Pelanggaran'},
+      {id:'catatan',icon:'notebook-pen',label:'Catatan Guru'},
+      {id:'pengumuman',icon:'megaphone',label:'Pengumuman'},
+    ]},
+  ],
+  wali: [
+    {section:'Menu', items:[
+      {id:'dashboard',icon:'layout-dashboard',label:'Dashboard'},
+      {id:'pengumuman',icon:'megaphone',label:'Pengumuman'},
+    ]},
+  ],
+  superadmin: [
+    {section:'Super Admin', items:[
+      {id:'super-dashboard',icon:'layout-dashboard',label:'Dashboard'},
+      {id:'super-sekolah',icon:'building-2',label:'Kelola Sekolah'},
+      {id:'super-paket',icon:'package',label:'Paket'},
+    ]},
+  ],
+};
+
+function renderSidebar() {
+  const role = S.user?.role || 'admin';
+  const menus = menuConfig[role] || menuConfig.admin;
+  const nav = document.getElementById('sidebarNav');
+  nav.innerHTML = menus.map(g => `
+    <div class="nav-section">${g.section}</div>
+    ${g.items.map(it => `<div class="nav-item${S.page===it.id?' active':''}" data-page="${it.id}"><i data-lucide="${it.icon}"></i><span>${it.label}</span></div>`).join('')}
+  `).join('');
+  nav.querySelectorAll('.nav-item').forEach(el => {
+    el.addEventListener('click', () => navigateTo(el.dataset.page));
+  });
+  lucide.createIcons();
+}
+
+function navigateTo(page) {
+  S.page = page;
+  location.hash = page;
+  renderSidebar();
+  renderPage();
+  if (window.innerWidth <= 768) toggleSidebar();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
+document.getElementById('sidebarOverlay').addEventListener('click', toggleSidebar);
+
+// ===== TABLE HELPERS =====
+function renderTable(headers, rows, emptyMsg = 'Belum ada data') {
+  if (!rows.length) return '<div class="empty"><i data-lucide="inbox"></i><p>' + emptyMsg + '</p></div>';
+  return `<div class="table-wrap"><table><thead><tr>${headers.map(h=>'<th>'+h+'</th>').join('')}</tr></thead><tbody>${rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')}</tbody></table></div>`;
+}
+
+function editIcon(id) { return '<button class="icon-btn" onclick="editRow('+id+')" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button>'; }
+function delIcon(id, label) { return '<button class="icon-btn danger" onclick="deleteRow('+id+','+JSON.stringify(label)+')" title="Hapus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>'; }
+
+function badge(text, type) { return '<span class="badge badge-'+type+'">'+text+'</span>'; }
+function fmtDate(d) { if (!d) return '-'; return new Date(d).toLocaleDateString('id-ID'); }
+function fmtMoney(n) { return 'Rp ' + Number(n||0).toLocaleString('id-ID'); }
+
+let editCb = null, deleteCb = null, currentSearch = '', currentPage = 1, pageSize = 15;
+
+function renderPagination(total) {
+  const pages = Math.ceil(total / pageSize);
+  if (pages <= 1) return '';
+  let html = '<div class="pagination">';
+  html += '<button class="page-btn" onclick="goPage('+(currentPage-1)+')" '+(currentPage<=1?'disabled':'')+'>&laquo;</button>';
+  for (let i = 1; i <= pages; i++) {
+    if (i === 1 || i === pages || (i >= currentPage-2 && i <= currentPage+2)) {
+      html += '<button class="page-btn'+(i===currentPage?' active':'')+'" onclick="goPage('+i+')">'+i+'</button>';
+    } else if (i === currentPage-3 || i === currentPage+3) {
+      html += '<span style="color:var(--text3);padding:0 4px">...</span>';
+    }
+  }
+  html += '<button class="page-btn" onclick="goPage('+(currentPage+1)+')" '+(currentPage>=pages?'disabled':'')+'>&raquo;</button>';
+  html += '</div>';
+  return html;
+}
+
+function goPage(p) { currentPage = p; renderPage(); }
+
+function filterData(data, search, fields) {
+  if (!search) return data;
+  const s = search.toLowerCase();
+  return data.filter(item => fields.some(f => String(item[f]||'').toLowerCase().includes(s)));
+}
+
+
+// ===== PAGE RENDERERS =====
+async function renderPage() {
+  const p = S.page;
+  document.getElementById('pageTitle').textContent = getPageTitle(p);
+  document.getElementById('topbarActions').innerHTML = getTopActions(p);
+  const c = document.getElementById('pageContent');
+  c.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3)">Memuat...</div>';
+  try {
+    if (p === 'dashboard') await renderDashboard(c);
+    else if (p === 'santri') await renderSantri(c);
+    else if (p === 'kamar') await renderKamar(c);
+    else if (p === 'kelas') await renderKelas(c);
+    else if (p === 'kegiatan') await renderKegiatan(c);
+    else if (p === 'kelompok') await renderKelompok(c);
+    else if (p === 'jadwal') await renderJadwal(c);
+    else if (p === 'absensi') await renderAbsensi(c);
+    else if (p === 'absen-malam') await renderAbsenMalam(c);
+    else if (p === 'absen-sekolah') await renderAbsenSekolah(c);
+    else if (p === 'pelanggaran') await renderPelanggaran(c);
+    else if (p === 'catatan') await renderCatatan(c);
+    else if (p === 'pengumuman') await renderPengumuman(c);
+    else if (p === 'rekap') await renderRekap(c);
+    else if (p === 'users') await renderUsers(c);
+    else if (p === 'settings') await renderSettings(c);
+    else if (p === 'super-dashboard') await renderSuperDashboard(c);
+    else if (p === 'super-sekolah') await renderSuperSekolah(c);
+    else if (p === 'super-paket') await renderSuperPaket(c);
+    else c.innerHTML = '<div class="empty"><p>Halaman tidak ditemukan</p></div>';
+    lucide.createIcons();
+  } catch (err) {
+    c.innerHTML = '<div class="empty"><p style="color:var(--danger)">' + err.message + '</p></div>';
+  }
+}
+
+function getPageTitle(p) {
+  const t = {dashboard:'Dashboard',santri:'Data Santri',kamar:'Data Kamar',kelas:'Data Kelas',kegiatan:'Kegiatan',kelompok:'Kelompok',jadwal:'Jadwal',absensi:'Absensi',absen_malam:'Absen Malam',absen_sekolah:'Absen Sekolah',pelanggaran:'Pelanggaran',catatan:'Catatan Guru',pengumuman:'Pengumuman',rekap:'Rekap Absensi',users:'Pengguna',settings:'Pengaturan','super-dashboard':'Dashboard Super Admin','super-sekolah':'Kelola Sekolah','super-paket':'Paket'};
+  return t[p] || p;
+}
+
+function getTopActions(p) {
+  const addPages = ['santri','kamar','kelas','kegiatan','kelompok','jadwal','pelanggaran','catatan','pengumuman','users','super-sekolah'];
+  if (addPages.includes(p)) return '<button class="btn btn-primary btn-sm" onclick="addRow()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Tambah</button>';
+  return '';
+}
+
+// ===== DASHBOARD =====
+async function renderDashboard(c) {
+  const [santri, kamar, kelas, pelanggaran, pengumuman] = await Promise.all([
+    api('/api/santri/').catch(() => []),
+    api('/api/kamar/').catch(() => []),
+    api('/api/kelas/').catch(() => []),
+    api('/api/pelanggaran/').catch(() => []),
+    api('/api/pengumuman/').catch(() => []),
+  ]);
+  const totalSantri = santri.length;
+  const aktifSantri = santri.filter(s => s.status === 'aktif').length;
+  c.innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card"><div class="label">&#x1F465; Total Santri</div><div class="value">${totalSantri}</div><div class="sub">${aktifSantri} aktif</div></div>
+      <div class="stat-card"><div class="label">&#x1F6CF;&#xFE0F; Kamar</div><div class="value">${kamar.length}</div></div>
+      <div class="stat-card"><div class="label">&#x1F3EB; Kelas</div><div class="value">${kelas.length}</div></div>
+      <div class="stat-card"><div class="label">&#x26A0;&#xFE0F; Pelanggaran</div><div class="value">${pelanggaran.length}</div></div>
+      <div class="stat-card"><div class="label">&#x1F4E2; Pengumuman</div><div class="value">${pengumuman.length}</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Pengumuman Terbaru</h3></div>
+      <div class="card-body">${pengumuman.length ? pengumuman.slice(0,5).map(p => '<div style="padding:12px 20px;border-bottom:1px solid var(--glass-border)"><strong>'+p.judul+'</strong><div class="text-muted" style="font-size:.8rem;margin-top:4px">'+fmtDate(p.tanggal)+' &middot; '+p.target+'</div></div>').join('') : '<div class="empty">Belum ada pengumuman</div>'}</div>
+    </div>`;
+}
+
+// ===== SANTRI =====
+let santriCache = [];
+async function renderSantri(c) {
+  santriCache = await api('/api/santri/');
+  const filtered = filterData(santriCache, currentSearch, ['nama','nis','nama_ayah','nama_ibu']);
+  const page = filtered.slice((currentPage-1)*pageSize, currentPage*pageSize);
+  const rows = page.map(s => [
+    s.nis || '-', s.nama,
+    s.kamar_nama || '-', s.kelas_nama || '-',
+    badge(s.status === 'aktif' ? 'Aktif' : s.status, s.status === 'aktif' ? 'success' : 'danger'),
+    s.nama_ayah || '-', s.no_hp_wali || '-',
+    '<div class="actions">'+editIcon(s.id)+delIcon(s.id,s.nama)+'</div>'
+  ]);
+  c.innerHTML = `
+    <div class="card">
+      <div class="card-header"><h3>Data Santri (${filtered.length})</h3><input class="search-box" placeholder="Cari santri..." value="${currentSearch}" oninput="currentSearch=this.value;currentPage=1;renderPage()"></div>
+      <div class="card-body">${renderTable(['NIS','Nama','Kamar','Kelas','Status','Nama Ayah','HP Wali','Aksi'], rows)}</div>
+      ${renderPagination(filtered.length)}
+    </div>`;
+  lucide.createIcons();
+  editCb = async (id) => {
+    const s = santriCache.find(x => x.id === id);
+    const kamar = await api('/api/kamar/').catch(() => []);
+    const kelas = await api('/api/kelas/').catch(() => []);
+    openModal('Edit Santri', renderSantriForm(s, kamar, kelas),
+      '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveSantri('+id+')">Simpan</button>');
+  };
+  deleteCb = async (id) => { await api('/api/santri/'+id, {method:'DELETE'}); toast('Santri dihapus'); renderPage(); };
+}
+
+function renderSantriForm(s = {}, kamar = [], kelas = []) {
+  return `
+    <div class="form-group"><label>Nama *</label><input id="f_nama" value="${s.nama||''}"></div>
+    <div class="form-group"><label>NIS</label><input id="f_nis" value="${s.nis||''}"></div>
+    <div class="row"><div class="col"><div class="form-group"><label>Kamar</label><select id="f_kamar"><option value="">- Pilih -</option>${kamar.map(k=>'<option value="'+k.id+'"'+(s.kamar_id==k.id?' selected':'')+'>'+k.nama+'</option>').join('')}</select></div></div>
+    <div class="col"><div class="form-group"><label>Kelas</label><select id="f_kelas"><option value="">- Pilih -</option>${kelas.map(k=>'<option value="'+k.id+'"'+(s.kelas_id==k.id?' selected':'')+'>'+k.nama+'</option>').join('')}</select></div></div></div>
+    <div class="row"><div class="col"><div class="form-group"><label>Nama Ayah</label><input id="f_ayah" value="${s.nama_ayah||''}"></div></div>
+    <div class="col"><div class="form-group"><label>Nama Ibu</label><input id="f_ibu" value="${s.nama_ibu||''}"></div></div></div>
+    <div class="form-group"><label>No HP Wali</label><input id="f_hp" value="${s.no_hp_wali||''}"></div>
+    <div class="form-group"><label>Status</label><select id="f_status"><option value="aktif"${s.status==='aktif'||!s.status?' selected':''}>Aktif</option><option value="nonaktif"${s.status==='nonaktif'?' selected':''}>Nonaktif</option><option value="lulus"${s.status==='lulus'?' selected':''}>Lulus</option><option value="keluar"${s.status==='keluar'?' selected':''}>Keluar</option></select></div>`;
+}
+
+async function saveSantri(id) {
+  const data = {
+    nama: document.getElementById('f_nama').value,
+    nis: document.getElementById('f_nis').value,
+    kamar_id: document.getElementById('f_kamar').value || null,
+    kelas_id: document.getElementById('f_kelas').value || null,
+    nama_ayah: document.getElementById('f_ayah').value,
+    nama_ibu: document.getElementById('f_ibu').value,
+    no_hp_wali: document.getElementById('f_hp').value,
+    status: document.getElementById('f_status').value,
+  };
+  if (!data.nama) return toast('Nama wajib diisi', 'error');
+  if (id) { await api('/api/santri/'+id, {method:'PUT', body:JSON.stringify(data)}); toast('Santri diupdate'); }
+  else { await api('/api/santri/', {method:'POST', body:JSON.stringify(data)}); toast('Santri ditambahkan'); }
+  closeModal(); renderPage();
+}
+
+// ===== KAMAR =====
+let kamarCache = [];
+async function renderKamar(c) {
+  kamarCache = await api('/api/kamar/');
+  const filtered = filterData(kamarCache, currentSearch, ['nama','keterangan']);
+  const page = filtered.slice((currentPage-1)*pageSize, currentPage*pageSize);
+  const rows = page.map(k => [k.nama, k.kapasitas, k.keterangan||'-', '<div class="actions">'+editIcon(k.id)+delIcon(k.id,k.nama)+'</div>']);
+  c.innerHTML = `<div class="card"><div class="card-header"><h3>Data Kamar (${filtered.length})</h3><input class="search-box" placeholder="Cari kamar..." value="${currentSearch}" oninput="currentSearch=this.value;currentPage=1;renderPage()"></div><div class="card-body">${renderTable(['Nama','Kapasitas','Keterangan','Aksi'], rows, 'Belum ada kamar')}</div>${renderPagination(filtered.length)}</div>`;
+  lucide.createIcons();
+  editCb = (id) => { const k = kamarCache.find(x=>x.id===id); openModal('Edit Kamar', renderKamarForm(k), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveKamar('+id+')">Simpan</button>'); };
+  deleteCb = async (id) => { await api('/api/kamar/'+id,{method:'DELETE'}); toast('Kamar dihapus'); renderPage(); };
+}
+function renderKamarForm(k={}) { return '<div class="form-group"><label>Nama *</label><input id="f_nama" value="'+(k.nama||'')+'"></div><div class="form-group"><label>Kapasitas</label><input id="f_kap" type="number" value="'+(k.kapasitas||20)+'"></div><div class="form-group"><label>Keterangan</label><input id="f_ket" value="'+(k.keterangan||'')+'"></div>'; }
+async function saveKamar(id) { const d={nama:document.getElementById('f_nama').value,kapasitas:parseInt(document.getElementById('f_kap').value)||20,keterangan:document.getElementById('f_ket').value}; if(!d.nama) return toast('Nama wajib diisi','error'); if(id) await api('/api/kamar/'+id,{method:'PUT',body:JSON.stringify(d)}); else await api('/api/kamar/',{method:'POST',body:JSON.stringify(d)}); toast(id?'Kamar diupdate':'Kamar ditambahkan'); closeModal(); renderPage(); }
+
+// ===== KELAS =====
+let kelasCache = [];
+async function renderKelas(c) {
+  kelasCache = await api('/api/kelas/');
+  const filtered = filterData(kelasCache, currentSearch, ['nama','tingkat','keterangan']);
+  const page = filtered.slice((currentPage-1)*pageSize, currentPage*pageSize);
+  const rows = page.map(k => [k.nama, k.tingkat||'-', k.keterangan||'-', '<div class="actions">'+editIcon(k.id)+delIcon(k.id,k.nama)+'</div>']);
+  c.innerHTML = `<div class="card"><div class="card-header"><h3>Data Kelas (${filtered.length})</h3><input class="search-box" placeholder="Cari kelas..." value="${currentSearch}" oninput="currentSearch=this.value;currentPage=1;renderPage()"></div><div class="card-body">${renderTable(['Nama','Tingkat','Keterangan','Aksi'], rows, 'Belum ada kelas')}</div>${renderPagination(filtered.length)}</div>`;
+  lucide.createIcons();
+  editCb = (id) => { const k = kelasCache.find(x=>x.id===id); openModal('Edit Kelas', renderKelasForm(k), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveKelas('+id+')">Simpan</button>'); };
+  deleteCb = async (id) => { await api('/api/kelas/'+id,{method:'DELETE'}); toast('Kelas dihapus'); renderPage(); };
+}
+function renderKelasForm(k={}) { return '<div class="form-group"><label>Nama *</label><input id="f_nama" value="'+(k.nama||'')+'"></div><div class="form-group"><label>Tingkat</label><input id="f_tingkat" value="'+(k.tingkat||'')+'"></div><div class="form-group"><label>Keterangan</label><input id="f_ket" value="'+(k.keterangan||'')+'"></div>'; }
+async function saveKelas(id) { const d={nama:document.getElementById('f_nama').value,tingkat:document.getElementById('f_tingkat').value,keterangan:document.getElementById('f_ket').value}; if(!d.nama) return toast('Nama wajib diisi','error'); if(id) await api('/api/kelas/'+id,{method:'PUT',body:JSON.stringify(d)}); else await api('/api/kelas/',{method:'POST',body:JSON.stringify(d)}); toast(id?'Kelas diupdate':'Kelas ditambahkan'); closeModal(); renderPage(); }
+
+
+// ===== KEGIATAN =====
+let kegiatanCache = [];
+async function renderKegiatan(c) {
+  kegiatanCache = await api('/api/kegiatan/');
+  const filtered = filterData(kegiatanCache, currentSearch, ['nama','jenis']);
+  const page = filtered.slice((currentPage-1)*pageSize, currentPage*pageSize);
+  const rows = page.map(k => [k.nama, badge(k.jenis,'info'), k.jam_mulai||'-' , k.jam_selesai||'-', k.keterangan||'-', '<div class="actions">'+editIcon(k.id)+delIcon(k.id,k.nama)+'</div>']);
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Kegiatan ('+filtered.length+')</h3><input class="search-box" placeholder="Cari..." value="'+currentSearch+'" oninput="currentSearch=this.value;currentPage=1;renderPage()"></div><div class="card-body">'+renderTable(['Nama','Jenis','Mulai','Selesai','Keterangan','Aksi'], rows, 'Belum ada kegiatan')+'</div>'+renderPagination(filtered.length)+'</div>';
+  lucide.createIcons();
+  editCb = (id) => { const k = kegiatanCache.find(x=>x.id===id); openModal('Edit Kegiatan', renderKegiatanForm(k), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveKegiatan('+id+')">Simpan</button>'); };
+  deleteCb = async (id) => { await api('/api/kegiatan/'+id,{method:'DELETE'}); toast('Dihapus'); renderPage(); };
+}
+function renderKegiatanForm(k={}) { return '<div class="form-group"><label>Nama *</label><input id="f_nama" value="'+(k.nama||'')+'"></div><div class="form-group"><label>Jenis</label><select id="f_jenis"><option value="harian"'+(k.jenis=='harian'||!k.jenis?' selected':'')+'>Harian</option><option value="mingguan"'+(k.jenis=='mingguan'?' selected':'')+'>Mingguan</option><option value="bulanan"'+(k.jenis=='bulanan'?' selected':'')+'>Bulanan</option><option value="lainnya"'+(k.jenis=='lainnya'?' selected':'')+'>Lainnya</option></select></div><div class="row"><div class="col"><div class="form-group"><label>Jam Mulai</label><input id="f_mulai" type="time" value="'+(k.jam_mulai||'')+'"></div></div><div class="col"><div class="form-group"><label>Jam Selesai</label><input id="f_selesai" type="time" value="'+(k.jam_selesai||'')+'"></div></div></div><div class="form-group"><label>Keterangan</label><input id="f_ket" value="'+(k.keterangan||'')+'"></div>'; }
+async function saveKegiatan(id) { const d={nama:document.getElementById('f_nama').value,jenis:document.getElementById('f_jenis').value,jam_mulai:document.getElementById('f_mulai').value||null,jam_selesai:document.getElementById('f_selesai').value||null,keterangan:document.getElementById('f_ket').value}; if(!d.nama) return toast('Nama wajib','error'); if(id) await api('/api/kegiatan/'+id,{method:'PUT',body:JSON.stringify(d)}); else await api('/api/kegiatan/',{method:'POST',body:JSON.stringify(d)}); toast(id?'Diupdate':'Ditambahkan'); closeModal(); renderPage(); }
+
+// ===== KELOMPOK =====
+let kelompokCache = [];
+async function renderKelompok(c) {
+  kelompokCache = await api('/api/kelompok/');
+  const filtered = filterData(kelompokCache, currentSearch, ['nama','keterangan']);
+  const page = filtered.slice((currentPage-1)*pageSize, currentPage*pageSize);
+  const rows = page.map(k => [k.nama, k.kegiatan_nama||'-', k.ustadz_nama||'-', k.keterangan||'-', '<div class="actions"><button class="icon-btn" onclick="viewKelompok('+k.id+')" title="Lihat Santri"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>'+editIcon(k.id)+delIcon(k.id,k.nama)+'</div>']);
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Kelompok ('+filtered.length+')</h3><input class="search-box" placeholder="Cari..." value="'+currentSearch+'" oninput="currentSearch=this.value;currentPage=1;renderPage()"></div><div class="card-body">'+renderTable(['Nama','Kegiatan','Ustadz','Keterangan','Aksi'], rows, 'Belum ada kelompok')+'</div>'+renderPagination(filtered.length)+'</div>';
+  lucide.createIcons();
+  editCb = async (id) => { const k = kelompokCache.find(x=>x.id===id); const [keg, usr] = await Promise.all([api('/api/kegiatan/').catch(()=>[]), api('/api/users/').catch(()=>[])]); openModal('Edit Kelompok', renderKelompokForm(k,keg,usr), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveKelompok('+id+')">Simpan</button>'); };
+  deleteCb = async (id) => { await api('/api/kelompok/'+id,{method:'DELETE'}); toast('Dihapus'); renderPage(); };
+}
+function renderKelompokForm(k={},keg=[],usr=[]) { return '<div class="form-group"><label>Nama *</label><input id="f_nama" value="'+(k.nama||'')+'"></div><div class="form-group"><label>Kegiatan</label><select id="f_keg"><option value="">- Pilih -</option>'+keg.map(x=>'<option value="'+x.id+'"'+(k.kegiatan_id==x.id?' selected':'')+'>'+x.nama+'</option>').join('')+'</select></div><div class="form-group"><label>Ustadz</label><select id="f_ustadz"><option value="">- Pilih -</option>'+usr.map(x=>'<option value="'+x.id+'"'+(k.ustadz_id==x.id?' selected':'')+'>'+x.nama+'</option>').join('')+'</select></div><div class="form-group"><label>Keterangan</label><input id="f_ket" value="'+(k.keterangan||'')+'"></div>'; }
+async function saveKelompok(id) { const d={nama:document.getElementById('f_nama').value,kegiatan_id:document.getElementById('f_keg').value||null,ustadz_id:document.getElementById('f_ustadz').value||null,keterangan:document.getElementById('f_ket').value}; if(!d.nama) return toast('Nama wajib','error'); if(id) await api('/api/kelompok/'+id,{method:'PUT',body:JSON.stringify(d)}); else await api('/api/kelompok/',{method:'POST',body:JSON.stringify(d)}); toast(id?'Diupdate':'Ditambahkan'); closeModal(); renderPage(); }
+
+async function viewKelompok(id) {
+  const k = await api('/api/kelompok/'+id);
+  const santri = await api('/api/santri/').catch(()=>[]);
+  const assigned = (k.santri||[]).map(s=>'<div style="padding:6px 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--glass-border)"><span>'+s.nama+'</span><button class="icon-btn danger" onclick="removeSantriKelompok('+id+','+s.id+')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>').join('');
+  const unassigned = santri.filter(s => !(k.santri||[]).find(ks=>ks.id===s.id));
+  const select = unassigned.length ? '<div style="margin-top:12px;display:flex;gap:8px"><select id="f_add_santri" style="flex:1;padding:8px;background:rgba(0,0,0,.3);border:1px solid var(--glass-border);border-radius:8px;color:var(--text)">'+unassigned.map(s=>'<option value="'+s.id+'">'+s.nama+'</option>').join('')+'</select><button class="btn btn-success btn-sm" onclick="addSantriKelompok('+id+')">Tambah</button></div>' : '<p class="text-muted" style="margin-top:12px;font-size:.8rem">Semua santri sudah masuk kelompok ini</p>';
+  openModal('Detail Kelompok: ' + k.nama, '<h4 style="margin-bottom:8px">Anggota ('+((k.santri||[]).length)+')</h4>' + (assigned || '<p class="text-muted">Belum ada anggota</p>') + select, '<button class="btn btn-outline" onclick="closeModal()">Tutup</button>');
+}
+async function addSantriKelompok(kid) { const sid = document.getElementById('f_add_santri').value; await api('/api/kelompok/'+kid+'/santri',{method:'POST',body:JSON.stringify({santri_id:parseInt(sid)})}); toast('Ditambahkan'); closeModal(); viewKelompok(kid); }
+async function removeSantriKelompok(kid,sid) { await api('/api/kelompok/'+kid+'/santri/'+sid,{method:'DELETE'}); toast('Dihapus'); closeModal(); viewKelompok(kid); }
+
+// ===== JADWAL =====
+async function renderJadwal(c) {
+  const [umum, sekolah] = await Promise.all([api('/api/jadwal/umum').catch(()=>[]), api('/api/jadwal/sekolah').catch(()=>[])]);
+  const hari = ['senin','selasa','rabu','kamis','jumat','sabtu','minggu'];
+  const umumRows = umum.map(j => [j.kegiatan_nama||'-', badge(j.hari,'info'), j.jam_mulai, j.jam_selesai, j.keterangan||'-', '<div class="actions">'+editIcon(j.id)+'</div>']);
+  const sekolahRows = sekolah.map(j => [j.kelas_nama||'-', j.mata_pelajaran, badge(j.hari,'info'), j.jam_mulai, j.jam_selesai, j.ustadz_nama||'-', '<div class="actions">'+editIcon(j.id)+'</div>']);
+  c.innerHTML = `
+    <div class="card mb-4"><div class="card-header"><h3>Jadwal Kegiatan Umum (${umum.length})</h3><button class="btn btn-primary btn-sm" onclick="addJadwalUmum()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Tambah</button></div><div class="card-body">${renderTable(['Kegiatan','Hari','Mulai','Selesai','Keterangan','Aksi'], umumRows, 'Belum ada jadwal umum')}</div></div>
+    <div class="card"><div class="card-header"><h3>Jadwal Sekolah (${sekolah.length})</h3><button class="btn btn-primary btn-sm" onclick="addJadwalSekolah()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Tambah</button></div><div class="card-body">${renderTable(['Kelas','Mapel','Hari','Mulai','Selesai','Ustadz','Aksi'], sekolahRows, 'Belum ada jadwal sekolah')}</div></div>`;
+  lucide.createIcons();
+}
+
+async function addJadwalUmum(existing = {}) {
+  const keg = await api('/api/kegiatan/').catch(()=>[]);
+  openModal('Jadwal Umum', '<div class="form-group"><label>Kegiatan *</label><select id="f_keg">'+keg.map(k=>'<option value="'+k.id+'"'+(existing.kegiatan_id==k.id?' selected':'')+'>'+k.nama+'</option>').join('')+'</select></div><div class="form-group"><label>Hari</label><select id="f_hari">'+['senin','selasa','rabu','kamis','jumat','sabtu','minggu'].map(h=>'<option value="'+h+'"'+(existing.hari==h?' selected':'')+'>'+h.charAt(0).toUpperCase()+h.slice(1)+'</option>').join('')+'</select></div><div class="row"><div class="col"><div class="form-group"><label>Jam Mulai *</label><input id="f_mulai" type="time" value="'+(existing.jam_mulai||'')+'"></div></div><div class="col"><div class="form-group"><label>Jam Selesai *</label><input id="f_selesai" type="time" value="'+(existing.jam_selesai||'')+'"></div></div></div><div class="form-group"><label>Keterangan</label><input id="f_ket" value="'+(existing.keterangan||'')+'"></div>', '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveJadwalUmum('+(existing.id||null)+')">Simpan</button>');
+}
+
+async function saveJadwalUmum(id) {
+  const d = {kegiatan_id:document.getElementById('f_keg').value,hari:document.getElementById('f_hari').value,jam_mulai:document.getElementById('f_mulai').value,jam_selesai:document.getElementById('f_selesai').value,keterangan:document.getElementById('f_ket').value};
+  if (id) await api('/api/jadwal/umum/'+id,{method:'PUT',body:JSON.stringify(d)}); else await api('/api/jadwal/umum/',{method:'POST',body:JSON.stringify(d)});
+  toast(id?'Diupdate':'Ditambahkan'); closeModal(); renderPage();
+}
+
+async function addJadwalSekolah(existing = {}) {
+  const [kelas, usr] = await Promise.all([api('/api/kelas/').catch(()=>[]), api('/api/users/').catch(()=>[])]);
+  openModal('Jadwal Sekolah', '<div class="form-group"><label>Kelas *</label><select id="f_kelas">'+kelas.map(k=>'<option value="'+k.id+'"'+(existing.kelas_id==k.id?' selected':'')+'>'+k.nama+'</option>').join('')+'</select></div><div class="form-group"><label>Mata Pelajaran *</label><input id="f_mapel" value="'+(existing.mata_pelajaran||'')+'"></div><div class="form-group"><label>Hari</label><select id="f_hari">'+['senin','selasa','rabu','kamis','jumat','sabtu','minggu'].map(h=>'<option value="'+h+'"'+(existing.hari==h?' selected':'')+'>'+h.charAt(0).toUpperCase()+h.slice(1)+'</option>').join('')+'</select></div><div class="row"><div class="col"><div class="form-group"><label>Jam Mulai *</label><input id="f_mulai" type="time" value="'+(existing.jam_mulai||'')+'"></div></div><div class="col"><div class="form-group"><label>Jam Selesai *</label><input id="f_selesai" type="time" value="'+(existing.jam_selesai||'')+'"></div></div></div><div class="form-group"><label>Ustadz</label><select id="f_ustadz"><option value="">- Pilih -</option>'+usr.map(u=>'<option value="'+u.id+'"'+(existing.ustadz_id==u.id?' selected':'')+'>'+u.nama+'</option>').join('')+'</select></div>', '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveJadwalSekolah('+(existing.id||null)+')">Simpan</button>');
+}
+
+async function saveJadwalSekolah(id) {
+  const d = {kelas_id:document.getElementById('f_kelas').value,mata_pelajaran:document.getElementById('f_mapel').value,hari:document.getElementById('f_hari').value,jam_mulai:document.getElementById('f_mulai').value,jam_selesai:document.getElementById('f_selesai').value,ustadz_id:document.getElementById('f_ustadz').value||null};
+  if (!d.mata_pelajaran) return toast('Mapel wajib','error');
+  if (id) await api('/api/jadwal/sekolah/'+id,{method:'PUT',body:JSON.stringify(d)}); else await api('/api/jadwal/sekolah/',{method:'POST',body:JSON.stringify(d)});
+  toast(id?'Diupdate':'Ditambahkan'); closeModal(); renderPage();
+}
+
+
+// ===== ABSENSI =====
+async function renderAbsensi(c) {
+  const sesi = await api('/api/absensi/sesi').catch(()=>[]);
+  const keg = await api('/api/kegiatan/').catch(()=>[]);
+  const rows = sesi.map(s => [
+    s.kegiatan_nama||'-', fmtDate(s.tanggal), s.kelompok_nama||'-',
+    badge(s.status==='buka'?'Buka':'Tutup', s.status==='buka'?'success':'danger'),
+    s.waktu_buka ? new Date(s.waktu_buka).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) : '-',
+    '<div class="actions"><button class="icon-btn" onclick="viewSesi('+s.id+')" title="Lihat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>'+(s.status==='buka'?'<button class="icon-btn" onclick="tutupSesi('+s.id+')" title="Tutup Sesi"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>':'')+'</div>'
+  ]);
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Sesi Absensi ('+sesi.length+')</h3><button class="btn btn-primary btn-sm" onclick="bukaSesiBaru()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Buka Sesi Baru</button></div><div class="card-body">'+renderTable(['Kegiatan','Tanggal','Kelompok','Status','Waktu Buka','Aksi'], rows, 'Belum ada sesi absensi')+'</div></div>';
+  lucide.createIcons();
+}
+
+async function bukaSesiBaru() {
+  const [keg, kel] = await Promise.all([api('/api/kegiatan/').catch(()=>[]), api('/api/kelompok/').catch(()=>[])]);
+  openModal('Buka Sesi Absensi', '<div class="form-group"><label>Kegiatan *</label><select id="f_keg">'+keg.map(k=>'<option value="'+k.id+'">'+k.nama+'</option>').join('')+'</select></div><div class="form-group"><label>Kelompok</label><select id="f_kel"><option value="">- Semua -</option>'+kel.map(k=>'<option value="'+k.id+'">'+k.nama+'</option>').join('')+'</select></div><div class="form-group"><label>Tanggal *</label><input id="f_tanggal" type="date" value="'+new Date().toISOString().slice(0,10)+'"></div>', '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="doBukaSesi()">Buka Sesi</button>');
+}
+
+async function doBukaSesi() {
+  const d = {kegiatan_id:document.getElementById('f_keg').value,kelompok_id:document.getElementById('f_kel').value||null,tanggal:document.getElementById('f_tanggal').value};
+  await api('/api/absensi/sesi',{method:'POST',body:JSON.stringify(d)});
+  toast('Sesi dibuka'); closeModal(); renderPage();
+}
+
+async function tutupSesi(id) {
+  await api('/api/absensi/sesi/'+id+'/tutup',{method:'PUT'});
+  toast('Sesi ditutup'); renderPage();
+}
+
+async function viewSesi(id) {
+  const detail = await api('/api/absensi/sesi/'+id);
+  const santri = detail.absensi || [];
+  const rows = santri.map(s => [
+    s.nama || '-',
+    s.nis || '-',
+    '<select onchange="updateAbsensiStatus('+id+','+s.santri_id+',this.value)" style="padding:4px 8px;border-radius:6px;border:1px solid var(--glass-border);background:rgba(0,0,0,.3);color:var(--text)">'+
+    ['hadir','izin','sakit','alpha'].map(st=>'<option value="'+st+'"'+(s.status==st?' selected':'')+'>'+st.charAt(0).toUpperCase()+st.slice(1)+'</option>').join('')+'</select>',
+    s.keterangan || '-'
+  ]);
+  openModal('Detail Sesi Absensi', '<p class="text-muted mb-3">Kegiatan: '+(detail.kegiatan_nama||'-')+' | Tanggal: '+fmtDate(detail.tanggal)+'</p>'+renderTable(['Nama','NIS','Status','Keterangan'], rows, 'Tidak ada data'), '<button class="btn btn-outline" onclick="closeModal()">Tutup</button>');
+  lucide.createIcons();
+}
+
+async function updateAbsensiStatus(sesiId, santriId, status) {
+  await api('/api/absensi/bulk',{method:'POST',body:JSON.stringify({sesi_id:sesiId,absensi:[{santri_id:santriId,status}]})});
+  toast('Status diupdate','info');
+}
+
+
+// ===== ABSEN MALAM =====
+async function renderAbsenMalam(c) {
+  const today = new Date().toISOString().slice(0,10);
+  const tanggal = currentSearch || today;
+  const data = await api('/api/absen-malam/?tanggal='+tanggal).catch(()=>[]);
+  const santri = await api('/api/santri/').catch(()=>[]);
+  const rows = data.map(a => [a.nama||'-', a.nis||'-', badge(a.status,a.status==='hadir'?'success':a.status==='izin'?'warning':a.status==='sakit'?'info':'danger'), a.keterangan||'-']);
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Absen Malam ('+data.length+')</h3><div style="display:flex;gap:8px"><input type="date" class="search-box" style="width:auto" value="'+tanggal+'" onchange="currentSearch=this.value;renderPage()"><button class="btn btn-primary btn-sm" onclick="openAbsenMalam(''+tanggal+'')">Isi Absen</button></div></div><div class="card-body">'+renderTable(['Nama','NIS','Status','Keterangan'], rows, 'Belum ada data untuk tanggal ini')+'</div></div>';
+  lucide.createIcons();
+}
+
+async function openAbsenMalam(tanggal) {
+  const santri = await api('/api/santri/').catch(()=>[]);
+  const existing = await api('/api/absen-malam/?tanggal='+tanggal).catch(()=>[]);
+  const items = santri.filter(s=>s.status==='aktif').map(s => {
+    const e = existing.find(x=>x.santri_id===s.id);
+    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--glass-border)"><span style="flex:1;font-size:.85rem">'+s.nama+'</span><select id="am_'+s.id+'" style="padding:4px 8px;border-radius:6px;border:1px solid var(--glass-border);background:rgba(0,0,0,.3);color:var(--text);font-size:.8rem"><option value="hadir"'+((!e||e.status=='hadir')?' selected':'')+'>Hadir</option><option value="izin"'+(e&&e.status=='izin'?' selected':'')+'>Izin</option><option value="sakit"'+(e&&e.status=='sakit'?' selected':'')+'>Sakit</option><option value="alpha"'+(e&&e.status=='alpha'?' selected':'')+'>Alpha</option></select></div>';
+  }).join('');
+  openModal('Absen Malam - '+tanggal, '<div style="max-height:400px;overflow-y:auto">'+items+'</div>', '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveAbsenMalam(''+tanggal+'')">Simpan</button>');
+}
+
+async function saveAbsenMalam(tanggal) {
+  const santri = await api('/api/santri/').catch(()=>[]);
+  const absensi = santri.filter(s=>s.status==='aktif').map(s => ({santri_id:s.id, status:document.getElementById('am_'+s.id).value}));
+  await api('/api/absen-malam/bulk',{method:'POST',body:JSON.stringify({tanggal,absensi})});
+  toast('Absen malam disimpan'); closeModal(); renderPage();
+}
+
+// ===== ABSEN SEKOLAH =====
+async function renderAbsenSekolah(c) {
+  const today = new Date().toISOString().slice(0,10);
+  const tanggal = currentSearch || today;
+  const data = await api('/api/absen-sekolah/?tanggal='+tanggal).catch(()=>[]);
+  const rows = data.map(a => [a.nama||'-', a.nis||'-', a.kelas_nama||'-', badge(a.status,a.status==='hadir'?'success':a.status==='izin'?'warning':a.status==='sakit'?'info':'danger'), a.keterangan||'-']);
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Absen Sekolah ('+data.length+')</h3><div style="display:flex;gap:8px"><input type="date" class="search-box" style="width:auto" value="'+tanggal+'" onchange="currentSearch=this.value;renderPage()"><button class="btn btn-primary btn-sm" onclick="openAbsenSekolah(''+tanggal+'')">Isi Absen</button></div></div><div class="card-body">'+renderTable(['Nama','NIS','Kelas','Status','Keterangan'], rows, 'Belum ada data')+'</div></div>';
+  lucide.createIcons();
+}
+
+async function openAbsenSekolah(tanggal) {
+  const santri = await api('/api/santri/').catch(()=>[]);
+  const existing = await api('/api/absen-sekolah/?tanggal='+tanggal).catch(()=>[]);
+  const items = santri.filter(s=>s.status==='aktif').map(s => {
+    const e = existing.find(x=>x.santri_id===s.id);
+    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--glass-border)"><span style="flex:1;font-size:.85rem">'+s.nama+'</span><select id="as_'+s.id+'" style="padding:4px 8px;border-radius:6px;border:1px solid var(--glass-border);background:rgba(0,0,0,.3);color:var(--text);font-size:.8rem"><option value="hadir"'+((!e||e.status=='hadir')?' selected':'')+'>Hadir</option><option value="izin"'+(e&&e.status=='izin'?' selected':'')+'>Izin</option><option value="sakit"'+(e&&e.status=='sakit'?' selected':'')+'>Sakit</option><option value="alpha"'+(e&&e.status=='alpha'?' selected':'')+'>Alpha</option></select></div>';
+  }).join('');
+  openModal('Absen Sekolah - '+tanggal, '<div style="max-height:400px;overflow-y:auto">'+items+'</div>', '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveAbsenSekolah(''+tanggal+'')">Simpan</button>');
+}
+
+async function saveAbsenSekolah(tanggal) {
+  const santri = await api('/api/santri/').catch(()=>[]);
+  const absensi = santri.filter(s=>s.status==='aktif').map(s => ({santri_id:s.id, status:document.getElementById('as_'+s.id).value}));
+  await api('/api/absen-sekolah/bulk',{method:'POST',body:JSON.stringify({tanggal,absensi})});
+  toast('Absen sekolah disimpan'); closeModal(); renderPage();
+}
+
+// ===== PELANGGARAN =====
+let pelCache = [];
+async function renderPelanggaran(c) {
+  pelCache = await api('/api/pelanggaran/').catch(()=>[]);
+  const filtered = filterData(pelCache, currentSearch, ['nama','jenis','keterangan']);
+  const page = filtered.slice((currentPage-1)*pageSize, currentPage*pageSize);
+  const rows = page.map(p => [p.nama||'-', p.jenis, p.poin, fmtDate(p.tanggal), p.keterangan||'-', '<div class="actions">'+editIcon(p.id)+delIcon(p.id,p.jenis)+'</div>']);
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Pelanggaran ('+filtered.length+')</h3><input class="search-box" placeholder="Cari..." value="'+currentSearch+'" oninput="currentSearch=this.value;currentPage=1;renderPage()"></div><div class="card-body">'+renderTable(['Santri','Jenis','Poin','Tanggal','Keterangan','Aksi'], rows, 'Belum ada pelanggaran')+'</div>'+renderPagination(filtered.length)+'</div>';
+  lucide.createIcons();
+  editCb = async (id) => { const p = pelCache.find(x=>x.id===id); const santri = await api('/api/santri/').catch(()=>[]); openModal('Edit Pelanggaran', renderPelForm(p,santri), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="savePel('+id+')">Simpan</button>'); };
+  deleteCb = async (id) => { await api('/api/pelanggaran/'+id,{method:'DELETE'}); toast('Dihapus'); renderPage(); };
+}
+function renderPelForm(p={},santri=[]) { return '<div class="form-group"><label>Santri *</label><select id="f_santri">'+santri.map(s=>'<option value="'+s.id+'"'+(p.santri_id==s.id?' selected':'')+'>'+s.nama+'</option>').join('')+'</select></div><div class="form-group"><label>Jenis *</label><input id="f_jenis" value="'+(p.jenis||'')+'"></div><div class="form-group"><label>Poin</label><input id="f_poin" type="number" value="'+(p.poin||0)+'"></div><div class="form-group"><label>Tanggal</label><input id="f_tanggal" type="date" value="'+(p.tanggal||new Date().toISOString().slice(0,10))+'"></div><div class="form-group"><label>Keterangan</label><input id="f_ket" value="'+(p.keterangan||'')+'"></div>'; }
+async function savePel(id) { const d={santri_id:document.getElementById('f_santri').value,jenis:document.getElementById('f_jenis').value,poin:parseInt(document.getElementById('f_poin').value)||0,tanggal:document.getElementById('f_tanggal').value,keterangan:document.getElementById('f_ket').value}; if(!d.jenis) return toast('Jenis wajib','error'); if(id) await api('/api/pelanggaran/'+id,{method:'PUT',body:JSON.stringify(d)}); else await api('/api/pelanggaran/',{method:'POST',body:JSON.stringify(d)}); toast(id?'Diupdate':'Ditambahkan'); closeModal(); renderPage(); }
+
+// ===== CATATAN =====
+let catCache = [];
+async function renderCatatan(c) {
+  catCache = await api('/api/catatan/').catch(()=>[]);
+  const filtered = filterData(catCache, currentSearch, ['nama','judul','isi','kategori']);
+  const page = filtered.slice((currentPage-1)*pageSize, currentPage*pageSize);
+  const rows = page.map(ct => [ct.nama||'-', ct.judul, badge(ct.kategori,'info'), fmtDate(ct.tanggal), '<div class="actions">'+editIcon(ct.id)+delIcon(ct.id,ct.judul)+'</div>']);
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Catatan Guru ('+filtered.length+')</h3><input class="search-box" placeholder="Cari..." value="'+currentSearch+'" oninput="currentSearch=this.value;currentPage=1;renderPage()"></div><div class="card-body">'+renderTable(['Santri','Judul','Kategori','Tanggal','Aksi'], rows, 'Belum ada catatan')+'</div>'+renderPagination(filtered.length)+'</div>';
+  lucide.createIcons();
+  editCb = async (id) => { const ct = catCache.find(x=>x.id===id); const santri = await api('/api/santri/').catch(()=>[]); openModal('Edit Catatan', renderCatForm(ct,santri), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveCat('+id+')">Simpan</button>'); };
+  deleteCb = async (id) => { await api('/api/catatan/'+id,{method:'DELETE'}); toast('Dihapus'); renderPage(); };
+}
+function renderCatForm(ct={},santri=[]) { return '<div class="form-group"><label>Santri *</label><select id="f_santri">'+santri.map(s=>'<option value="'+s.id+'"'+(ct.santri_id==s.id?' selected':'')+'>'+s.nama+'</option>').join('')+'</select></div><div class="form-group"><label>Judul *</label><input id="f_judul" value="'+(ct.judul||'')+'"></div><div class="form-group"><label>Kategori</label><select id="f_kategori"><option value="akademik"'+(ct.kategori=='akademik'?' selected':'')+'>Akademik</option><option value="behavior"'+(ct.kategori=='behavior'?' selected':'')+'>Behavior</option><option value="lainnya"'+(ct.kategori=='lainnya'||!ct.kategori?' selected':'')+'>Lainnya</option></select></div><div class="form-group"><label>Isi</label><textarea id="f_isi" rows="4">'+(ct.isi||'')+'</textarea></div><div class="form-group"><label>Tanggal</label><input id="f_tanggal" type="date" value="'+(ct.tanggal||new Date().toISOString().slice(0,10))+'"></div>'; }
+async function saveCat(id) { const d={santri_id:document.getElementById('f_santri').value,judul:document.getElementById('f_judul').value,kategori:document.getElementById('f_kategori').value,isi:document.getElementById('f_isi').value,tanggal:document.getElementById('f_tanggal').value}; if(!d.judul) return toast('Judul wajib','error'); if(id) await api('/api/catatan/'+id,{method:'PUT',body:JSON.stringify(d)}); else await api('/api/catatan/',{method:'POST',body:JSON.stringify(d)}); toast(id?'Diupdate':'Ditambahkan'); closeModal(); renderPage(); }
+
+// ===== PENGUMUMAN =====
+let pengCache = [];
+async function renderPengumuman(c) {
+  pengCache = await api('/api/pengumuman/').catch(()=>[]);
+  const filtered = filterData(pengCache, currentSearch, ['judul','isi','target']);
+  const page = filtered.slice((currentPage-1)*pageSize, currentPage*pageSize);
+  const rows = page.map(p => [p.judul, badge(p.target,'info'), fmtDate(p.tanggal), badge(p.aktif==='ya'?'Aktif':'Nonaktif',p.aktif==='ya'?'success':'danger'), '<div class="actions">'+editIcon(p.id)+delIcon(p.id,p.judul)+'</div>']);
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Pengumuman ('+filtered.length+')</h3><input class="search-box" placeholder="Cari..." value="'+currentSearch+'" oninput="currentSearch=this.value;currentPage=1;renderPage()"></div><div class="card-body">'+renderTable(['Judul','Target','Tanggal','Status','Aksi'], rows, 'Belum ada pengumuman')+'</div>'+renderPagination(filtered.length)+'</div>';
+  lucide.createIcons();
+  editCb = (id) => { const p = pengCache.find(x=>x.id===id); openModal('Edit Pengumuman', renderPengForm(p), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="savePeng('+id+')">Simpan</button>'); };
+  deleteCb = async (id) => { await api('/api/pengumuman/'+id,{method:'DELETE'}); toast('Dihapus'); renderPage(); };
+}
+function renderPengForm(p={}) { return '<div class="form-group"><label>Judul *</label><input id="f_judul" value="'+(p.judul||'')+'"></div><div class="form-group"><label>Isi *</label><textarea id="f_isi" rows="4">'+(p.isi||'')+'</textarea></div><div class="form-group"><label>Target</label><select id="f_target"><option value="semua"'+(p.target=='semua'||!p.target?' selected':'')+'>Semua</option><option value="ustadz"'+(p.target=='ustadz'?' selected':'')+'>Ustadz</option><option value="wali"'+(p.target=='wali'?' selected':'')+'>Wali</option><option value="admin"'+(p.target=='admin'?' selected':'')+'>Admin</option></select></div><div class="form-group"><label>Tanggal</label><input id="f_tanggal" type="date" value="'+(p.tanggal||new Date().toISOString().slice(0,10))+'"></div><div class="form-group"><label>Status</label><select id="f_aktif"><option value="ya"'+(p.aktif=='ya'||!p.aktif?' selected':'')+'>Aktif</option><option value="tidak"'+(p.aktif=='tidak'?' selected':'')+'>Nonaktif</option></select></div>'; }
+async function savePeng(id) { const d={judul:document.getElementById('f_judul').value,isi:document.getElementById('f_isi').value,target:document.getElementById('f_target').value,tanggal:document.getElementById('f_tanggal').value,aktif:document.getElementById('f_aktif').value}; if(!d.judul||!d.isi) return toast('Judul dan isi wajib','error'); if(id) await api('/api/pengumuman/'+id,{method:'PUT',body:JSON.stringify(d)}); else await api('/api/pengumuman/',{method:'POST',body:JSON.stringify(d)}); toast(id?'Diupdate':'Ditambahkan'); closeModal(); renderPage(); }
+
+
+// ===== REKAP =====
+async function renderRekap(c) {
+  const data = await api('/api/rekap/').catch(()=>[]);
+  const rows = (data || []).map(r => [
+    r.nama || '-', r.nis || '-',
+    r.total_hadir || 0, r.total_izin || 0, r.total_sakit || 0, r.total_alpha || 0,
+    '<div class="actions"><a href="/api/rekap/export/pdf/'+r.santri_id+'" target="_blank" class="btn btn-outline btn-sm">PDF</a></div>'
+  ]);
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Rekap Absensi</h3><a href="/api/rekap/export/excel" target="_blank" class="btn btn-success btn-sm">Export Excel</a></div><div class="card-body">'+renderTable(['Nama','NIS','Hadir','Izin','Sakit','Alpha','Aksi'], rows, 'Belum ada data rekap')+'</div></div>';
+  lucide.createIcons();
+}
+
+// ===== USERS =====
+let usrCache = [];
+async function renderUsers(c) {
+  usrCache = await api('/api/users/').catch(()=>[]);
+  const filtered = filterData(usrCache, currentSearch, ['nama','username','role']);
+  const page = filtered.slice((currentPage-1)*pageSize, currentPage*pageSize);
+  const rows = page.map(u => [
+    u.nama, u.username,
+    badge(u.role==='admin'?'Admin':u.role==='ustadz'?'Ustadz':'Wali', u.role==='admin'?'danger':'info'),
+    badge(u.status==='aktif'?'Aktif':'Nonaktif', u.status==='aktif'?'success':'danger'),
+    '<div class="actions">'+editIcon(u.id)+delIcon(u.id,u.nama)+'</div>'
+  ]);
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Pengguna ('+filtered.length+')</h3><input class="search-box" placeholder="Cari..." value="'+currentSearch+'" oninput="currentSearch=this.value;currentPage=1;renderPage()"></div><div class="card-body">'+renderTable(['Nama','Username','Role','Status','Aksi'], rows, 'Belum ada pengguna')+'</div>'+renderPagination(filtered.length)+'</div>';
+  lucide.createIcons();
+  editCb = (id) => { const u = usrCache.find(x=>x.id===id); openModal('Edit Pengguna', renderUsrForm(u), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveUsr('+id+')">Simpan</button>'); };
+  deleteCb = async (id) => { await api('/api/users/'+id,{method:'DELETE'}); toast('Dihapus'); renderPage(); };
+}
+function renderUsrForm(u={}) { return '<div class="form-group"><label>Nama *</label><input id="f_nama" value="'+(u.nama||'')+'"></div><div class="form-group"><label>Username *</label><input id="f_username" value="'+(u.username||'')+'"></div>'+(u.id?'':'<div class="form-group"><label>Password *</label><input id="f_pass" type="password"></div>')+'<div class="form-group"><label>Role</label><select id="f_role"><option value="ustadz"'+(u.role=='ustadz'||!u.role?' selected':'')+'>Ustadz</option><option value="admin"'+(u.role=='admin'?' selected':'')+'>Admin</option></select></div>'; }
+async function saveUsr(id) { const d={nama:document.getElementById('f_nama').value,username:document.getElementById('f_username').value,role:document.getElementById('f_role').value}; const pass=document.getElementById('f_pass'); if(pass&&pass.value) d.password=pass.value; if(!d.nama||!d.username) return toast('Nama dan username wajib','error'); if(!id&&!d.password) return toast('Password wajib','error'); if(id) await api('/api/users/'+id,{method:'PUT',body:JSON.stringify(d)}); else await api('/api/users/',{method:'POST',body:JSON.stringify(d)}); toast(id?'Diupdate':'Ditambahkan'); closeModal(); renderPage(); }
+
+// ===== SETTINGS =====
+async function renderSettings(c) {
+  const s = await api('/api/settings/').catch(()=>({}));
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Pengaturan Pesantren</h3></div><div class="card-body" style="padding:20px">'+
+    '<div class="form-group"><label>Nama Aplikasi</label><input id="s_app_name" value="'+(s.app_name||'Pesantren Absensi')+'"></div>'+
+    '<div class="form-group"><label>Kepala Pesantren</label><input id="s_kepala" value="'+(s.kepala_nama||'')+'"></div>'+
+    '<div class="form-group"><label>Nama Kota</label><input id="s_kota" value="'+(s.nama_kota||'')+'"></div>'+
+    '<div class="form-group"><label>Logo URL</label><input id="s_logo" value="'+(s.logo||'')+'" placeholder="https://..."></div>'+
+    '<div class="form-group"><label>Background URL</label><input id="s_bg" value="'+(s.background||'')+'" placeholder="https://..."></div>'+
+    '<div style="margin-top:16px"><button class="btn btn-primary btn-sm" onclick="saveSettings()">Simpan Pengaturan</button></div>'+
+    '</div></div>';
+}
+
+async function saveSettings() {
+  const d = {
+    app_name: document.getElementById('s_app_name').value,
+    kepala_nama: document.getElementById('s_kepala').value,
+    nama_kota: document.getElementById('s_kota').value,
+    logo: document.getElementById('s_logo').value,
+    background: document.getElementById('s_bg').value,
+  };
+  await api('/api/settings/',{method:'PUT',body:JSON.stringify(d)});
+  toast('Pengaturan disimpan');
+  document.getElementById('sidebarAppName').textContent = d.app_name || 'Pesantren Absensi';
+}
+
+
+// ===== SUPER ADMIN =====
+async function renderSuperDashboard(c) {
+  const stats = await api('/api/super/stats').catch(()=>({}));
+  c.innerHTML = '<div class="stats-grid">'+
+    '<div class="stat-card"><div class="label">&#x1F3DB;&#xFE0F; Total Pesantren</div><div class="value">'+(stats.total_sekolah||0)+'</div></div>'+
+    '<div class="stat-card"><div class="label">&#x2705; Aktif</div><div class="value" style="color:var(--success)">'+(stats.sekolah_aktif||0)+'</div></div>'+
+    '<div class="stat-card"><div class="label">&#x23F3; Trial</div><div class="value" style="color:var(--warning)">'+(stats.sekolah_trial||0)+'</div></div>'+
+    '<div class="stat-card"><div class="label">&#x1F6AB; Suspend</div><div class="value" style="color:var(--danger)">'+(stats.sekolah_suspend||0)+'</div></div>'+
+    '<div class="stat-card"><div class="label">&#x1F465; Total Santri</div><div class="value">'+(stats.total_santri||0)+'</div></div>'+
+    '<div class="stat-card"><div class="label">&#x1F4B0; Estimasi Revenue/Bulan</div><div class="value">'+fmtMoney(stats.monthly_revenue)+'</div></div>'+
+    '</div>';
+}
+
+let sekCache = [];
+async function renderSuperSekolah(c) {
+  sekCache = await api('/api/super/sekolah').catch(()=>[]);
+  const filtered = filterData(sekCache, currentSearch, ['nama','slug','paket_nama']);
+  const page = filtered.slice((currentPage-1)*pageSize, currentPage*pageSize);
+  const rows = page.map(s => [
+    s.nama, s.slug,
+    s.paket_nama || '-', fmtMoney(s.harga_bulan)+'/bln',
+    badge(s.status==='aktif'?'Aktif':s.status==='trial'?'Trial':'Suspend', s.status==='aktif'?'success':s.status==='trial'?'warning':'danger'),
+    fmtDate(s.expired_at),
+    (s.jumlah_santri||0)+' / '+(s.jumlah_users||0),
+    '<div class="actions">'+
+    '<button class="icon-btn" onclick="activateSekolah('+s.id+')" title="Aktifkan"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>'+
+    '<button class="icon-btn" onclick="extendTrial('+s.id+')" title="Extend Trial"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>'+
+    editIcon(s.id)+'</div>'
+  ]);
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Kelola Sekolah ('+filtered.length+')</h3><input class="search-box" placeholder="Cari..." value="'+currentSearch+'" oninput="currentSearch=this.value;currentPage=1;renderPage()"></div><div class="card-body">'+renderTable(['Nama','Slug','Paket','Harga','Status','Expired','Santri/Users','Aksi'], rows, 'Belum ada sekolah')+'</div>'+renderPagination(filtered.length)+'</div>';
+  lucide.createIcons();
+  editCb = (id) => { const s = sekCache.find(x=>x.id===id); openModal('Edit Sekolah', renderSekForm(s), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveSek('+id+')">Simpan</button>'); };
+}
+
+function renderSekForm(s={}) { return '<div class="form-group"><label>Nama *</label><input id="f_nama" value="'+(s.nama||'')+'"></div><div class="form-group"><label>Slug *</label><input id="f_slug" value="'+(s.slug||'')+'"></div><div class="form-group"><label>Alamat</label><input id="f_alamat" value="'+(s.alamat||'')+'"></div><div class="form-group"><label>Kota</label><input id="f_kota" value="'+(s.nama_kota||'')+'"></div>'; }
+
+async function saveSek(id) {
+  const d = {nama:document.getElementById('f_nama').value,slug:document.getElementById('f_slug').value,alamat:document.getElementById('f_alamat').value,nama_kota:document.getElementById('f_kota').value};
+  if(!d.nama||!d.slug) return toast('Nama dan slug wajib','error');
+  await api('/api/super/sekolah/'+id,{method:'PUT',body:JSON.stringify(d)});
+  toast('Sekolah diupdate'); closeModal(); renderPage();
+}
+
+async function activateSekolah(id) {
+  openModal('Aktifkan Sekolah', '<div class="form-group"><label>Berapa bulan?</label><input id="f_months" type="number" value="1" min="1"></div>', '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-success btn-sm" onclick="doActivate('+id+')">Aktifkan</button>');
+}
+async function doActivate(id) {
+  const m = parseInt(document.getElementById('f_months').value)||1;
+  await api('/api/super/sekolah/'+id+'/activate',{method:'POST',body:JSON.stringify({months:m})});
+  toast('Sekolah diaktifkan '+m+' bulan'); closeModal(); renderPage();
+}
+
+async function extendTrial(id) {
+  openModal('Extend Trial', '<div class="form-group"><label>Tambah berapa hari?</label><input id="f_days" type="number" value="7" min="1"></div>', '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-warning btn-sm" onclick="doExtend('+id+')">Extend</button>');
+}
+async function doExtend(id) {
+  const d = parseInt(document.getElementById('f_days').value)||7;
+  await api('/api/super/sekolah/'+id+'/extend-trial',{method:'POST',body:JSON.stringify({days:d})});
+  toast('Trial diperpanjang '+d+' hari'); closeModal(); renderPage();
+}
+
+async function renderSuperPaket(c) {
+  const paket = await api('/api/super/paket').catch(()=>[]);
+  const rows = paket.map(p => [p.nama, fmtMoney(p.harga_bulan)+'/bln', p.max_santri, p.max_users, Object.keys(p.fitur||{}).filter(k=>p.fitur[k]).join(', ')]);
+  c.innerHTML = '<div class="card"><div class="card-header"><h3>Paket Langganan</h3></div><div class="card-body">'+renderTable(['Nama','Harga/Bulan','Max Santri','Max Users','Fitur'], rows)+'</div></div>';
+}
+
+// ===== GENERIC CRUD =====
+function addRow() {
+  const p = S.page;
+  if (p === 'santri') { api('/api/kamar/').then(k=>api('/api/kelas/').then(kls=>{ openModal('Tambah Santri', renderSantriForm({},k,kls), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveSantri(null)">Simpan</button>'); })); }
+  else if (p === 'kamar') openModal('Tambah Kamar', renderKamarForm(), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveKamar(null)">Simpan</button>');
+  else if (p === 'kelas') openModal('Tambah Kelas', renderKelasForm(), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveKelas(null)">Simpan</button>');
+  else if (p === 'kegiatan') openModal('Tambah Kegiatan', renderKegiatanForm(), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveKegiatan(null)">Simpan</button>');
+  else if (p === 'kelompok') { api('/api/kegiatan/').then(k=>api('/api/users/').then(u=>{ openModal('Tambah Kelompok', renderKelompokForm({},k,u), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveKelompok(null)">Simpan</button>'); })); }
+  else if (p === 'jadwal') addJadwalUmum();
+  else if (p === 'pelanggaran') { api('/api/santri/').then(s=>{ openModal('Tambah Pelanggaran', renderPelForm({},s), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="savePel(null)">Simpan</button>'); }); }
+  else if (p === 'catatan') { api('/api/santri/').then(s=>{ openModal('Tambah Catatan', renderCatForm({},s), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveCat(null)">Simpan</button>'); }); }
+  else if (p === 'pengumuman') openModal('Tambah Pengumuman', renderPengForm(), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="savePeng(null)">Simpan</button>');
+  else if (p === 'users') openModal('Tambah Pengguna', renderUsrForm(), '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="saveUsr(null)">Simpan</button>');
+  else if (p === 'super-sekolah') openModal('Tambah Sekolah', '<div class="form-group"><label>Nama *</label><input id="f_nama"></div><div class="form-group"><label>Slug *</label><input id="f_slug" placeholder="darul-hikmah"></div><div class="form-group"><label>Admin Nama *</label><input id="f_admin_nama"></div><div class="form-group"><label>Admin Username *</label><input id="f_admin_user"></div><div class="form-group"><label>Admin Password *</label><input id="f_admin_pass" type="password"></div>', '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-primary btn-sm" onclick="doCreateSekolah()">Simpan</button>');
+}
+
+async function doCreateSekolah() {
+  const d = {nama:document.getElementById('f_nama').value,slug:document.getElementById('f_slug').value,admin_nama:document.getElementById('f_admin_nama').value,admin_username:document.getElementById('f_admin_user').value,admin_password:document.getElementById('f_admin_pass').value};
+  if(!d.nama||!d.slug||!d.admin_nama||!d.admin_username||!d.admin_password) return toast('Semua field wajib','error');
+  await api('/api/super/sekolah',{method:'POST',body:JSON.stringify(d)});
+  toast('Sekolah dibuat'); closeModal(); renderPage();
+}
+
+function editRow(id) { if (editCb) editCb(id); }
+function deleteRow(id, label) {
+  openModal('Konfirmasi Hapus', '<p>Yakin ingin menghapus <strong>'+label+'</strong>?</p><p class="text-muted" style="font-size:.8rem;margin-top:8px">Tindakan ini tidak bisa dibatalkan.</p>',
+    '<button class="btn btn-outline" onclick="closeModal()">Batal</button><button class="btn btn-danger btn-sm" onclick="confirmDelete('+id+')">Hapus</button>');
+}
+function confirmDelete(id) { if (deleteCb) deleteCb(id); closeModal(); }
+
+// ===== INIT =====
+function initApp() {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('appPage').style.display = 'block';
+  document.getElementById('userName').textContent = S.user?.nama || '-';
+  document.getElementById('userRole').textContent = S.user?.role || '-';
+  document.getElementById('userAvatar').textContent = (S.user?.nama || 'A').charAt(0).toUpperCase();
+  if (S.user?.role === 'superadmin') {
+    document.getElementById('sidebarAppName').textContent = 'Super Admin';
+    document.getElementById('sidebarSekolah').textContent = 'Pesantren SaaS';
+  } else {
+    api('/api/tenant-info').then(t => {
+      S.sekolah = t;
+      document.getElementById('sidebarAppName').textContent = t.app_name || 'Pesantren Absensi';
+      document.getElementById('sidebarSekolah').textContent = t.nama || '-';
+    }).catch(() => {});
+  }
+  renderSidebar();
+  renderPage();
+}
+
+// ===== BOOT =====
+(function boot() {
+  document.getElementById('loginForm').addEventListener('submit', handleLogin);
+  renderLoginFields();
+  if (S.token && S.user) {
+    initApp();
+  } else {
+    document.getElementById('loginPage').style.display = '';
+    document.getElementById('appPage').style.display = 'none';
+  }
+  window.addEventListener('hashchange', () => { S.page = location.hash.slice(1) || 'dashboard'; renderSidebar(); renderPage(); });
+})();
+</script>
+</body>
+</html>

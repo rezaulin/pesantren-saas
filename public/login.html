@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Pesantren Absensi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #6366f1; --primary-dark: #4f46e5; --bg: #0f172a; --bg2: #1e293b;
+      --text: #f8fafc; --text2: #94a3b8; --glass: rgba(255,255,255,0.08);
+      --glass-border: rgba(255,255,255,0.12); --radius: 16px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .bg-pattern { position: fixed; inset: 0; z-index: 0; background: radial-gradient(ellipse at 30% 30%, rgba(99,102,241,0.15) 0%, transparent 50%), radial-gradient(ellipse at 70% 70%, rgba(139,92,246,0.1) 0%, transparent 50%); }
+    
+    .login-container { width: 100%; max-width: 440px; position: relative; z-index: 1; }
+    .login-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 40px; backdrop-filter: blur(20px); }
+    .login-header { text-align: center; margin-bottom: 32px; }
+    .login-logo { width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), #8b5cf6); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .login-header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+    .login-header p { color: var(--text2); font-size: 0.9rem; }
+    
+    .tabs { display: flex; gap: 4px; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+    .tab { flex: 1; padding: 10px; text-align: center; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all 0.3s; color: var(--text2); }
+    .tab.active { background: var(--primary); color: white; }
+    
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.85rem; color: var(--text2); }
+    .form-group input { width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--text); font-size: 1rem; transition: all 0.3s; }
+    .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.2); }
+    .input-wrap { position: relative; }
+    .input-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text2); width: 20px; height: 20px; }
+    .input-wrap input { padding-left: 44px; }
+    
+    .btn { width: 100%; padding: 14px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, var(--primary), #8b5cf6); color: white; margin-top: 8px; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(99,102,241,0.4); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    
+    .msg { padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 0.85rem; display: none; }
+    .msg.show { display: block; }
+    .msg.error { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+    
+    .back-link { text-align: center; margin-top: 20px; }
+    .back-link a { color: var(--text2); text-decoration: none; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; }
+    .back-link a:hover { color: var(--text); }
+    
+    .tenant-info { text-align: center; padding: 16px; background: rgba(99,102,241,0.1); border-radius: 10px; margin-bottom: 20px; display: none; }
+    .tenant-info.show { display: block; }
+    .tenant-info h3 { font-size: 1.1rem; margin-bottom: 4px; }
+    .tenant-info span { color: var(--text2); font-size: 0.85rem; }
+    
+    @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="bg-pattern"></div>
+  
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo"><i data-lucide="school" style="width:32px;height:32px;color:white"></i></div>
+        <h1 id="appName">Pesantren Absensi</h1>
+        <p>Masuk ke akun Anda</p>
+      </div>
+      
+      <div id="tenantInfo" class="tenant-info">
+        <h3 id="tenantNama"></h3>
+        <span id="tenantSlug"></span>
+      </div>
+      
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('admin')">Admin / Ustadz</div>
+        <div class="tab" onclick="switchTab('wali')">Wali Santri</div>
+      </div>
+      
+      <div id="loginMsg" class="msg"></div>
+      
+      <!-- Admin Login -->
+      <form id="adminForm" onsubmit="loginAdmin(event)">
+        <div class="form-group">
+          <label>Username</label>
+          <div class="input-wrap">
+            <i data-lucide="user"></i>
+            <input type="text" id="adminUsername" placeholder="Masukkan username" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <i data-lucide="lock"></i>
+            <input type="password" id="adminPassword" placeholder="Masukkan password" required>
+          </div>
+        </div>
+        <button type="submit" class="btn" id="adminBtn">
+          <i data-lucide="log-in" style="width:20px;height:20px"></i> Masuk
+        </button>
+      </form>
+      
+      <!-- Wali Login -->
+      <form id="waliForm" style="display:none" onsubmit="loginWali(event)">
+        <div class="form-group">
+          <label>NIS atau Nama Santri</label>
+          <div class="input-wrap">
+            <i data-lucide="search"></i>
+            <input type="text" id="waliIdentitas" placeholder="Masukkan NIS atau nama santri" required>
+          </div>
+        </div>
+        <button type="submit" class="btn" id="waliBtn">
+          <i data-lucide="log-in" style="width:20px;height:20px"></i> Masuk sebagai Wali
+        </button>
+      </form>
+      
+      <div class="back-link">
+        <a href="/"><i data-lucide="arrow-left" style="width:16px;height:16px"></i> Kembali ke Beranda</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    let slug = urlParams.get('slug') || localStorage.getItem('tenant_slug') || '';
+    
+    // Auto-detect slug from subdomain
+    const host = window.location.hostname;
+    const parts = host.split('.');
+    if (parts.length >= 3 && parts[0] !== 'www') {
+      slug = parts[0];
+    }
+    
+    async function loadTenant() {
+      if (!slug) return;
+      try {
+        const res = await fetch('/api/tenant-info?slug=' + slug);
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('appName').textContent = data.app_name || 'Pesantren Absensi';
+          document.getElementById('tenantNama').textContent = data.nama;
+          document.getElementById('tenantSlug').textContent = slug + '.pesantrenku.tech';
+          document.getElementById('tenantInfo').classList.add('show');
+          document.title = (data.app_name || 'Login') + ' - ' + data.nama;
+          localStorage.setItem('tenant_slug', slug);
+        }
+      } catch(e) {}
+    }
+    loadTenant();
+    
+    function switchTab(type) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('adminForm').style.display = type === 'admin' ? 'block' : 'none';
+      document.getElementById('waliForm').style.display = type === 'wali' ? 'block' : 'none';
+      document.getElementById('loginMsg').className = 'msg';
+    }
+    
+    function showError(msg) {
+      const el = document.getElementById('loginMsg');
+      el.className = 'msg error show';
+      el.textContent = msg;
+    }
+    
+    async function loginAdmin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('adminBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i data-lucide="loader" style="width:20px;height:20px;animation:spin 1s linear infinite"></i> Loading...';
+      lucide.createIcons();
+      
+      try {
+        const res = await fetch('/api/login?slug=' + slug, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: document.getElementById('adminUsername').value,
+            password: document.getElementById('adminPassword').value
+          })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('tenant_slug', slug);
+          window.location.href = '/app.html';
+        } else {
+          showError(data.error || 'Login gagal');
+        }
+      } catch(e) {
+        showError('Koneksi gagal');
+      }
+      btn.disabled = false;
+      btn.innerHTML = '<i data-lucide="log-in" style="width:20px;height:20px"></i> Masuk';
+      lucide.createIcons();
+    }
+    
+    async function loginWali(e) {
+      e.preventDefault();
+      const btn = document.getElementById('waliBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i data-lucide="loader" style="width:20px;height:20px;animation:spin 1s linear infinite"></i> Loading...';
+      lucide.createIcons();
+      
+      try {
+        const res = await fetch('/api/login-wali?slug=' + slug, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            identitas: document.getElementById('waliIdentitas').value
+          })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('tenant_slug', slug);
+          window.location.href = '/app.html';
+        } else {
+          showError(data.error || 'Login gagal');
+        }
+      } catch(e) {
+        showError('Koneksi gagal');
+      }
+      btn.disabled = false;
+      btn.innerHTML = '<i data-lucide="log-in" style="width:20px;height:20px"></i> Masuk sebagai Wali';
+      lucide.createIcons();
+    }
+    
+    // Check if already logged in
+    if (localStorage.getItem('token')) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.role === 'superadmin') {
+        window.location.href = '/super.html';
+      } else {
+        window.location.href = '/app.html';
+      }
+    }
+  </script>
+</body>
+</html>

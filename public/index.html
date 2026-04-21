@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesantren Absensi - Sistem Manajemen Pesantren</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #6366f1; --primary-dark: #4f46e5; --primary-light: #818cf8;
+      --bg: #0f172a; --bg2: #1e293b; --bg3: #334155;
+      --text: #f8fafc; --text2: #94a3b8; --text3: #64748b;
+      --glass: rgba(255,255,255,0.08); --glass-border: rgba(255,255,255,0.12);
+      --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+      --radius: 16px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+    .bg-pattern { position: fixed; inset: 0; z-index: 0; background: radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.1) 0%, transparent 50%), radial-gradient(ellipse at 50% 80%, rgba(6,182,212,0.08) 0%, transparent 50%); }
+    
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+    
+    /* Header */
+    header { padding: 20px 0; }
+    .nav { display: flex; justify-content: space-between; align-items: center; }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 1.5rem; font-weight: 700; }
+    .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), #8b5cf6); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .btn { padding: 10px 24px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; font-size: 0.95rem; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #8b5cf6); color: white; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(99,102,241,0.4); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--glass-border); }
+    .btn-outline:hover { background: var(--glass); }
+    
+    /* Hero */
+    .hero { text-align: center; padding: 80px 0 60px; }
+    .hero h1 { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
+    .hero h1 span { background: linear-gradient(135deg, var(--primary-light), #c084fc, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.2rem; color: var(--text2); max-width: 600px; margin: 0 auto 40px; }
+    .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    
+    /* Features */
+    .features { padding: 60px 0; }
+    .section-title { text-align: center; margin-bottom: 50px; }
+    .section-title h2 { font-size: 2.2rem; font-weight: 700; margin-bottom: 12px; }
+    .section-title p { color: var(--text2); font-size: 1.1rem; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+    .feature-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 32px; transition: all 0.3s; }
+    .feature-card:hover { transform: translateY(-4px); border-color: var(--primary); }
+    .feature-icon { width: 56px; height: 56px; background: linear-gradient(135deg, var(--primary), #8b5cf6); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+    .feature-card h3 { font-size: 1.2rem; margin-bottom: 10px; }
+    .feature-card p { color: var(--text2); font-size: 0.95rem; line-height: 1.6; }
+    
+    /* Pricing */
+    .pricing { padding: 60px 0; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; max-width: 1000px; margin: 0 auto; }
+    .pricing-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 36px; text-align: center; transition: all 0.3s; position: relative; }
+    .pricing-card.popular { border-color: var(--primary); background: linear-gradient(180deg, rgba(99,102,241,0.1), var(--glass)); }
+    .pricing-card.popular::before { content: 'Populer'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--primary), #8b5cf6); color: white; padding: 4px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+    .pricing-card:hover { transform: translateY(-4px); }
+    .pricing-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+    .pricing-price { font-size: 2.5rem; font-weight: 800; margin-bottom: 4px; }
+    .pricing-price span { font-size: 1rem; font-weight: 400; color: var(--text2); }
+    .pricing-desc { color: var(--text2); margin-bottom: 24px; font-size: 0.95rem; }
+    .pricing-features { list-style: none; text-align: left; margin-bottom: 28px; }
+    .pricing-features li { padding: 8px 0; display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--text2); }
+    .pricing-features li i { color: var(--success); }
+    .pricing-features li.disabled { opacity: 0.4; }
+    .pricing-features li.disabled i { color: var(--danger); }
+    
+    /* Register Form */
+    .register-section { padding: 60px 0 80px; }
+    .register-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 40px; max-width: 600px; margin: 0 auto; }
+    .register-card h2 { text-align: center; margin-bottom: 8px; font-size: 1.8rem; }
+    .register-card .subtitle { text-align: center; color: var(--text2); margin-bottom: 32px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem; }
+    .form-group input, .form-group select { width: 100%; padding: 14px 16px; background: var(--bg); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--text); font-size: 1rem; transition: all 0.3s; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.2); }
+    .slug-input { display: flex; align-items: center; }
+    .slug-input input { border-radius: 10px 0 0 10px; }
+    .slug-suffix { padding: 14px 16px; background: var(--bg3); border: 1px solid var(--glass-border); border-left: 0; border-radius: 0 10px 10px 0; color: var(--text2); white-space: nowrap; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .btn-full { width: 100%; justify-content: center; padding: 16px; font-size: 1.05rem; }
+    .msg { padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem; display: none; }
+    .msg.error { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); display: block; }
+    .msg.success { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); display: block; }
+    
+    /* Footer */
+    footer { padding: 30px 0; text-align: center; color: var(--text3); font-size: 0.9rem; border-top: 1px solid var(--glass-border); }
+    
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.2rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-pattern"></div>
+  
+  <header>
+    <div class="container">
+      <nav class="nav">
+        <div class="logo">
+          <div class="logo-icon"><i data-lucide="school" style="width:24px;height:24px;color:white"></i></div>
+          <span>PesantrenKu</span>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <a href="/login.html" class="btn btn-outline">Masuk</a>
+          <a href="#daftar" class="btn btn-primary">Daftar Gratis</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Sistem Manajemen<br><span>Pesantren Modern</span></h1>
+      <p>Kelola absensi, santri, kelompok, dan pelaporan pesantren Anda dengan mudah. Multi-tenant, aman, dan modern.</p>
+      <div class="hero-btns">
+        <a href="#daftar" class="btn btn-primary"><i data-lucide="rocket" style="width:20px;height:20px"></i> Mulai Gratis 1 Bulan</a>
+        <a href="#fitur" class="btn btn-outline"><i data-lucide="info" style="width:20px;height:20px"></i> Pelajari Lebih</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="fitur">
+    <div class="container">
+      <div class="section-title">
+        <h2>Fitur Unggulan</h2>
+        <p>Semua yang Anda butuhkan untuk mengelola pesantren</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="clipboard-check" style="width:28px;height:28px;color:white"></i></div>
+          <h3>Absensi Digital</h3>
+          <p>Absensi harian, malam, dan sekolah dengan sistem yang cepat dan akurat. Buka sesi absensi per kelompok.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="users" style="width:28px;height:28px;color:white"></i></div>
+          <h3>Manajemen Santri</h3>
+          <p>Database santri lengkap dengan data kamar, kelas, dan informasi wali. Import dari Excel.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="layout-grid" style="width:28px;height:28px;color:white"></i></div>
+          <h3>Kelompok & Kegiatan</h3>
+          <p>Kelola kelompok ngaji, sorogan, bakat, dan kegiatan lainnya dengan penugasan ustadz.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="file-spreadsheet" style="width:28px;height:28px;color:white"></i></div>
+          <h3>Laporan & Export</h3>
+          <p>Rekap absensi, export Excel, dan generate raport PDF untuk setiap santri.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="alert-triangle" style="width:28px;height:28px;color:white"></i></div>
+          <h3>Pelanggaran & Catatan</h3>
+          <p>Catat pelanggaran dengan poin dan catatan guru untuk monitoring perkembangan santri.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="smartphone" style="width:28px;height:28px;color:white"></i></div>
+          <h3>PWA & Mobile</h3>
+          <p>Akses dari mana saja dengan Progressive Web App. Install di HP seperti aplikasi native.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing" id="harga">
+    <div class="container">
+      <div class="section-title">
+        <h2>Pilih Paket</h2>
+        <p>Harga terjangkau untuk semua ukuran pesantren</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-name">Basic</div>
+          <div class="pricing-price">Rp 150rb<span>/bulan</span></div>
+          <div class="pricing-desc">Cocok untuk pesantren kecil</div>
+          <ul class="pricing-features">
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Maks 200 santri</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Maks 20 user</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Absensi & Pelanggaran</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Catatan & Pengumuman</li>
+            <li class="disabled"><i data-lucide="x-circle" style="width:18px;height:18px"></i> Raport PDF</li>
+            <li class="disabled"><i data-lucide="x-circle" style="width:18px;height:18px"></i> Export Excel</li>
+          </ul>
+          <button class="btn btn-outline btn-full" onclick="selectPlan(1)">Pilih Basic</button>
+        </div>
+        <div class="pricing-card popular">
+          <div class="pricing-name">Pro</div>
+          <div class="pricing-price">Rp 200rb<span>/bulan</span></div>
+          <div class="pricing-desc">Pilihan terbaik untuk menengah</div>
+          <ul class="pricing-features">
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Maks 500 santri</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Maks 50 user</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Semua fitur Basic</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Raport PDF</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Export Excel</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Custom Logo</li>
+          </ul>
+          <button class="btn btn-primary btn-full" onclick="selectPlan(2)">Pilih Pro</button>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-name">Premium</div>
+          <div class="pricing-price">Rp 250rb<span>/bulan</span></div>
+          <div class="pricing-desc">Untuk pesantren besar</div>
+          <ul class="pricing-features">
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Santri Unlimited</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> User Unlimited</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Semua fitur Pro</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Custom Domain</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Rekap Ustadz</li>
+            <li><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981"></i> Priority Support</li>
+          </ul>
+          <button class="btn btn-outline btn-full" onclick="selectPlan(3)">Pilih Premium</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="register-section" id="daftar">
+    <div class="container">
+      <div class="register-card">
+        <h2>Daftar Pesantren</h2>
+        <p class="subtitle">Gratis 1 bulan trial untuk semua paket</p>
+        <div id="formMsg" class="msg"></div>
+        <form id="registerForm" onsubmit="submitRegister(event)">
+          <div class="form-group">
+            <label>Nama Pesantren</label>
+            <input type="text" id="regNama" placeholder="Pondok Pesantren Al-Falah" required>
+          </div>
+          <div class="form-group">
+            <label>URL / Subdomain</label>
+            <div class="slug-input">
+              <input type="text" id="regSlug" placeholder="alfalah" required pattern="[a-z0-9-]+" oninput="checkSlug(this.value)">
+              <span class="slug-suffix">.pesantrenku.tech</span>
+            </div>
+            <small id="slugStatus" style="color:var(--text2);margin-top:6px;display:block"></small>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nama Admin</label>
+              <input type="text" id="regAdminNama" placeholder="Ahmad" required>
+            </div>
+            <div class="form-group">
+              <label>Paket</label>
+              <select id="regPaket">
+                <option value="1">Basic - Rp 150rb/bulan</option>
+                <option value="2">Pro - Rp 200rb/bulan</option>
+                <option value="3">Premium - Rp 250rb/bulan</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Username Admin</label>
+              <input type="text" id="regUsername" placeholder="admin" required>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="regPassword" placeholder="Minimal 6 karakter" required minlength="6">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="regBtn">
+            <i data-lucide="user-plus" style="width:20px;height:20px"></i> Daftar Sekarang
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2024 PesantrenKu - Sistem Manajemen Pesantren SaaS</p>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+    
+    let slugTimeout;
+    function checkSlug(slug) {
+      clearTimeout(slugTimeout);
+      const el = document.getElementById('slugStatus');
+      if (!slug) { el.textContent = ''; return; }
+      if (!/^[a-z0-9-]+$/.test(slug)) {
+        el.textContent = 'Hanya huruf kecil, angka, dan strip';
+        el.style.color = '#fca5a5';
+        return;
+      }
+      el.textContent = 'Mengecek...';
+      el.style.color = 'var(--text2)';
+      slugTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch('/api/cek-slug/' + slug);
+          const data = await res.json();
+          if (data.available) {
+            el.textContent = 'Subdomain tersedia!';
+            el.style.color = '#6ee7b7';
+          } else {
+            el.textContent = 'Subdomain sudah digunakan';
+            el.style.color = '#fca5a5';
+          }
+        } catch(e) { el.textContent = ''; }
+      }, 500);
+    }
+    
+    function selectPlan(id) {
+      document.getElementById('regPaket').value = id;
+      document.getElementById('daftar').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    async function submitRegister(e) {
+      e.preventDefault();
+      const msg = document.getElementById('formMsg');
+      const btn = document.getElementById('regBtn');
+      msg.className = 'msg';
+      
+      const body = {
+        nama: document.getElementById('regNama').value,
+        slug: document.getElementById('regSlug').value.toLowerCase(),
+        admin_nama: document.getElementById('regAdminNama').value,
+        admin_username: document.getElementById('regUsername').value,
+        admin_password: document.getElementById('regPassword').value,
+        paket_id: parseInt(document.getElementById('regPaket').value)
+      };
+      
+      btn.disabled = true;
+      btn.innerHTML = '<i data-lucide="loader" style="width:20px;height:20px;animation:spin 1s linear infinite"></i> Mendaftarkan...';
+      lucide.createIcons();
+      
+      try {
+        const res = await fetch('/api/register-public', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          msg.className = 'msg success';
+          msg.textContent = 'Berhasil mendaftar! Mengalihkan ke halaman login...';
+          setTimeout(() => {
+            window.location.href = '/login.html?slug=' + body.slug;
+          }, 1500);
+        } else {
+          msg.className = 'msg error';
+          msg.textContent = data.error || 'Gagal mendaftar';
+        }
+      } catch(e) {
+        msg.className = 'msg error';
+        msg.textContent = 'Koneksi gagal';
+      }
+      btn.disabled = false;
+      btn.innerHTML = '<i data-lucide="user-plus" style="width:20px;height:20px"></i> Daftar Sekarang';
+      lucide.createIcons();
+    }
+  </script>
+  <style>@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}</style>
+</body>
+</html>
