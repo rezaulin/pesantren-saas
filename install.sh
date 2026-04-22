@@ -156,22 +156,20 @@ mysql -u root pesantren_saas < "$INSTALL_DIR/db/schema.sql"
 
 # MySQL performance tuning
 info "Optimasi MySQL untuk production..."
-mysql -u root <<'TUNING'
-SET GLOBAL innodb_buffer_pool_size = 256 * 1024 * 1024;
-SET GLOBAL max_connections = 200;
-SET GLOBAL query_cache_type = 1;
-SET GLOBAL query_cache_size = 64 * 1024 * 1024;
-TUNING
 
-# Make persistent via config
+# Detect MySQL version
+MYSQL_VER=$(mysql -u root -e "SELECT VERSION();" -sN 2>/dev/null || echo "unknown")
+info "MySQL version: $MYSQL_VER"
+
+# Tuning config (compatible with MySQL 5.7, 8.0, and MariaDB)
 cat > /etc/mysql/conf.d/pesantren-tuning.cnf << EOF
 [mysqld]
 innodb_buffer_pool_size = 256M
 max_connections = 200
-query_cache_type = 1
-query_cache_size = 64M
 innodb_log_file_size = 64M
 innodb_flush_log_at_trx_commit = 2
+innodb_io_capacity = 2000
+innodb_io_capacity_max = 4000
 EOF
 
 systemctl restart mysql
