@@ -33,7 +33,37 @@ Sistem manajemen pesantren berbasis web dengan arsitektur multi-tenant. Setiap p
 
 ---
 
-## Instalasi dari Nol
+## Instalasi Cepat (One Click)
+
+Dari fresh VPS Ubuntu, cukup 1 command:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/rezaulin/pesantren-saas/master/install.sh | bash
+```
+
+Atau manual:
+```bash
+wget https://raw.githubusercontent.com/rezaulin/pesantren-saas/master/install.sh
+bash install.sh
+```
+
+Installer akan otomatis:
+- Install Node.js 18, MySQL, Nginx, PM2
+- Setup database & import schema
+- Konfigurasi .env & Nginx
+- Start aplikasi dengan PM2 (auto-restart on boot)
+
+Kamu cukup input:
+- Domain (contoh: `pesantrenku.tech`)
+- DB password
+- Port (default 3000)
+- Super Admin username & password
+
+Setelah install selesai, ikuti instruksi di terminal untuk setting DNS & SSL.
+
+---
+
+## Instalasi Manual (Step by Step)
 
 ### Prerequisites
 - VPS Ubuntu 20.04+ (minimal 1 vCPU, 1 GB RAM)
