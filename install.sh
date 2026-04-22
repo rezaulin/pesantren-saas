@@ -154,7 +154,29 @@ info "Step 5/8: Import database schema..."
 
 mysql -u root pesantren_saas < "$INSTALL_DIR/db/schema.sql"
 
-success "Schema imported"
+# MySQL performance tuning
+info "Optimasi MySQL untuk production..."
+mysql -u root <<'TUNING'
+SET GLOBAL innodb_buffer_pool_size = 256 * 1024 * 1024;
+SET GLOBAL max_connections = 200;
+SET GLOBAL query_cache_type = 1;
+SET GLOBAL query_cache_size = 64 * 1024 * 1024;
+TUNING
+
+# Make persistent via config
+cat > /etc/mysql/conf.d/pesantren-tuning.cnf << EOF
+[mysqld]
+innodb_buffer_pool_size = 256M
+max_connections = 200
+query_cache_type = 1
+query_cache_size = 64M
+innodb_log_file_size = 64M
+innodb_flush_log_at_trx_commit = 2
+EOF
+
+systemctl restart mysql
+
+success "Schema imported & MySQL dioptimasi"
 
 # ============================================================
 # STEP 6: KONFIGURASI .ENV
@@ -226,8 +248,9 @@ cd "$INSTALL_DIR"
 # Stop if already running
 pm2 delete pesantren-saas 2>/dev/null || true
 
-# Start with PM2
-pm2 start server.js --name pesantren-saas
+# Start with PM2 (cluster mode untuk multi-core)
+# PM2 cluster otomatis fork sesuai jumlah CPU
+pm2 start server.js --name pesantren-saas -i max
 pm2 save
 
 # Setup PM2 startup on boot
