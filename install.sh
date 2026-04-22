@@ -119,7 +119,8 @@ success "MySQL terinstall"
 info "Step 3/8: Setup database..."
 
 mysql -u root <<EOSQL
-CREATE DATABASE IF NOT EXISTS pesantren_saas CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+DROP DATABASE IF EXISTS pesantren_saas;
+CREATE DATABASE pesantren_saas CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER IF NOT EXISTS 'pesantren'@'localhost' IDENTIFIED BY '${DB_PASS}';
 GRANT ALL PRIVILEGES ON pesantren_saas.* TO 'pesantren'@'localhost';
 FLUSH PRIVILEGES;
